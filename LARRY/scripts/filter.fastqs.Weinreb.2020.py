@@ -129,7 +129,7 @@ def filter_FASTQ_on_barcodes(path, sequencing_library, unique_bcs, outpath="./")
     #     num_lines = count_reads_in_file(path, lines_per_read=4, ret=True)
     line = input_FASTQ.readline().decode("utf-8").strip("\n")
 
-    filtered_FASTQ, full_outpath = initiate_outFASTQ(sequencing_library, outpath)
+    filtered_FASTQ, filtered_outpath = initiate_outFASTQ(sequencing_library, outpath)
     line_counter, reads_in_barcodes, reads_not_in_barcodes = 0, 0, 0
 
     print(
