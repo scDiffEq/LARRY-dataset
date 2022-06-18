@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: LARRY-data
+Version: 0.0.0
+Summary: LARRY Dataset: lineage and RNA recovery
+Home-page: https://github.com/pinellolab/LARRY-data
+Author: Michael E. Vinyard - Harvard University - Massachussetts General Hospital - Broad Institute of MIT and Harvard
+Author-email: mvinyard@broadinstitute.org
+License: MIT
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Requires-Python: >3.7.0
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# LARRY dataset
+
+### [LARRY *in vitro* Hematopoiesis Dataset](https://)
+
+Source repositories
+* [AllonKleinLab/paper-data](https://github.com/AllonKleinLab/paper-data/tree/master/Lineage_tracing_on_transcriptional_landscapes_links_state_to_fate_during_differentiation)
+* [AllonKleinLab/LARRY](https://github.com/AllonKleinLab/LARRY)
+
+#### Reference
+* Weinreb, C., Rodriguez-Fraticelli, A., Camargo, F.D., Klein, A.M. <a href="https://science.sciencemag.org/content/367/6479/eaaw3381">**Lineage tracing on transcriptional landscapes links state to fate during differentiation**</a>. *Science* **80** (2020). https://doi.org/10.1126/science.aaw3381
+
+---
+
+Please email Michael E. Vinyard (**mvinyard@broadinstitute.org**) with any questions or interests. 
+
+
