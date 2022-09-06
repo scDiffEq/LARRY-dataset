@@ -4,7 +4,7 @@ import os
 import sys
 
 setup(
-    name='LARRY-data',
+    name='LARRY-dataset',
     python_requires='>3.7.0',
     author='Michael E. Vinyard - Harvard University - Massachussetts General Hospital - Broad Institute of MIT and Harvard',
     author_email='mvinyard@broadinstitute.org',
@@ -14,13 +14,11 @@ setup(
     description='LARRY Dataset: lineage and RNA recovery',
     packages = [
         'larry',
+        '_in_vitro',
+        '_in_vivo',
     ],
     install_requires=[
-        "anndata>=0.7.1",
-        "scanpy>=1.4.3",
-        "torch>=1.1.0",
-        "numpy>=1.19.2",
-        "pandas>=1.1.2",
+        "anndata>=0.8",
     ],
     classifiers = [
         "Development Status :: 2 - Pre-Alpha",
