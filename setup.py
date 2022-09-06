@@ -23,7 +23,7 @@ setup(
     ],
     classifiers = [
         "Development Status :: 2 - Pre-Alpha",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
