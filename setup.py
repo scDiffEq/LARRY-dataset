@@ -1,9 +1,9 @@
-from setuptools import setup
+import setuptools
 import re
 import os
 import sys
 
-setup(
+setuptools.setup(
     name='LARRY-dataset',
     version='0.0.0',
     python_requires='>3.7.0',
@@ -13,11 +13,7 @@ setup(
     long_description = open("README.md", encoding="utf-8").read(),
     long_description_content_type = 'text/markdown',
     description='LARRY Dataset: lineage and RNA recovery',
-    packages = [
-        'larry',
-        '_in_vitro',
-        '_in_vivo',
-    ],
+    packages = setuptools.find_packages(),
     install_requires=[
         "anndata>=0.8",
     ],
