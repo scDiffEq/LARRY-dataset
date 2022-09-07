@@ -14,6 +14,7 @@ setuptools.setup(
     long_description_content_type = 'text/markdown',
     description='LARRY Dataset: lineage and RNA recovery',
     packages = setuptools.find_packages(),
+    include_package_data=True,
     install_requires=[
         "anndata>=0.8",
     ],

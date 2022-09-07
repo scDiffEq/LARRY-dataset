@@ -5,3 +5,4 @@ __email__ = ", ".join(["vinyard@g.harvard.edu",])
 
 
 # -----------------------------------------------------------------------------
+from ._fetch._fetch_data_from_github import _fetch_data_from_github as fetch
