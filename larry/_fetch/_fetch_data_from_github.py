@@ -54,8 +54,11 @@ class FetchData:
 
     def compose_adata(self):
         self.adata = f._compose_adata(self.dataset_dict)
-        if write_h5ad:
-            adata.write_h5ad(self._h5ad_path)
+        self.adata.uns['dataset'] = self._dataset
+        self.adata.uns['h5ad_path'] = self._h5ad_path
+        if self._write_h5ad:
+            print("\nWriting adata to: {}".format(self._h5ad_path))
+            self.adata.write_h5ad(self._h5ad_path)
         self.print_adata()
         return self.adata
 
@@ -68,12 +71,11 @@ class FetchData:
 
         if self._h5ad_exists:
             return self.read_h5ad()
-
         else:
             self.download_data()
             return self.compose_adata()
-
-
+        
+        
 # main module controlling function: -------------------------------------------
 def _fetch_data_from_github(
     dataset,

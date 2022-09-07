@@ -9,6 +9,7 @@ import os
 import pydk
 import scipy
 import pickle
+import anndata
 import pandas as pd
 import licorice_font
 
@@ -24,6 +25,11 @@ def _load_LARRY_PathDict():
     pkl_path = os.path.join(working_dir, "_data/LARRY_PathDict.pkl")
     return pydk.load_pickled(pkl_path), pkl_path
 
+def _mk_dataset_dict(LARRY_PathDict, dataset):
+    DatasetDict = {}
+    for key, value in LARRY_PathDict["filepaths"][dataset].items():
+        DatasetDict[key] = value
+    return DatasetDict
 
 def _download_url(url, name=None, destination_dir="./", bar=False):
 
@@ -91,7 +97,8 @@ def _register(
         destination_dir, "adata.Weinreb2020.{}.h5ad".format(dataset)
     )
     h5ad_exists = os.path.exists(h5ad_path)
-
+    
+    self._dataset = dataset
     self._destination_dir = destination_dir
     self._h5ad_path = h5ad_path
     self._h5ad_exists = h5ad_exists
