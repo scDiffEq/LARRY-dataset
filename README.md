@@ -1,5 +1,10 @@
 # LARRY dataset
 
+### Install
+```BASH
+pip install larry-dataset
+```
+
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/larry-dataset.svg)](https://pypi.python.org/pypi/larry-dataset/)
 [![PyPI version](https://badge.fury.io/py/larry-dataset.svg)](https://badge.fury.io/py/larry-dataset)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
