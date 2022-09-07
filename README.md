@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/larry-dataset.svg)](https://badge.fury.io/py/larry-dataset)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-### Installation
+## Installation
 
 #### [`pip`]() distribution
 ```BASH
@@ -17,7 +17,7 @@ git clone https://github.com/mvinyard/LARRY-dataset.git; cd LARRY-dataset
 pip install -e .
 ```
 
-### Quickstart
+## Quickstart
 Downloads pre-processed data from [**AllonKleinLab**/paper-data](https://github.com/AllonKleinLab/paper-data/tree/master/Lineage_tracing_on_transcriptional_landscapes_links_state_to_fate_during_differentiation) to `./KleinLabData` (by default). The data is formatted into [`AnnData`](https://anndata.readthedocs.io/en/latest/) and returned to the user. A `.h5ad` file is also saved, locally. The data downloading and conversion step take several minutes due to the large expression `normed_counts` matrices though this only happens once.
 
 ```python
@@ -27,7 +27,7 @@ dataset = "in_vitro" # can also choose from: "in_vivo" or "cytokine_perturbation
 adata = larry.fetch(dataset)
 ```
 
-### Source
+## Sources
 
 #### Repositories
 * [**AllonKleinLab**/paper-data](https://github.com/AllonKleinLab/paper-data/tree/master/Lineage_tracing_on_transcriptional_landscapes_links_state_to_fate_during_differentiation)
