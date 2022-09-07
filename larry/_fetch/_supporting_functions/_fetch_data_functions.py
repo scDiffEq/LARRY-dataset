@@ -100,7 +100,7 @@ def _register(
     self._write_h5ad = write_h5ad
 
     if self._h5ad_exists:
-        self._print_space = None
+        self._print_space = ""
     else:
         self._print_space = "\n"
 
