@@ -20,7 +20,7 @@ pip install -e .
 ### Quickstart
 Downloads pre-processed data from [**AllonKleinLab**/paper-data](https://github.com/AllonKleinLab/paper-data/tree/master/Lineage_tracing_on_transcriptional_landscapes_links_state_to_fate_during_differentiation) to `./KleinLabData` (by default). The data is formatted into [`AnnData`](https://anndata.readthedocs.io/en/latest/) and returned to the user. A `.h5ad` file is also saved, locally. The data downloading and conversion step take several minutes due to the large expression `normed_counts` matrices though this only happens once.
 
-```
+```python
 import larry
     
 dataset = "in_vitro" # can also choose from: "in_vivo" or "cytokine_perturbation"
