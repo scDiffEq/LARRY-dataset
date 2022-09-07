@@ -33,6 +33,34 @@ AnnData object with n_obs × n_vars = 130887 × 25289
     obsm: 'X_clone'
 ```
 
+```python
+import larry
+
+LARRY_LightningData = larry.LARRY_LightningDataModule()
+LARRY_LightningData.prepare_data()
+```
+```
+ AnnData object with n_obs × n_vars = 130887 × 25289
+    obs: 'Library', 'Cell barcode', 'Time point', 'Starting population', 'Cell type annotation', 'Well', 'SPRING-x', 'SPRING-y'
+    var: 'gene_name'
+    uns: 'dataset', 'h5ad_path'
+    obsm: 'X_clone'
+Preprocessing performed previously. Loading...done.
+```
+Under the hood, the `LARRY_LightningData` calls `larry.fetch()` and `larry.pp.Yeo2021_recipe()`, and if `task == "fate_prediction"`, `larry.pp.annotate_fate_test_train()` 
+
+```python
+LARRY_LightningData.adata
+```
+Print the updated `adata`:
+```
+AnnData object with n_obs × n_vars = 130887 × 25289
+    obs: 'Library', 'Cell barcode', 'Time point', 'Starting population', 'Cell type annotation', 'Well', 'SPRING-x', 'SPRING-y', 'cell_idx', 'clone_idx'
+    var: 'gene_name', 'highly_variable', 'corr_cell_cycle', 'pass_filter'
+    uns: 'dataset', 'h5ad_path', 'highly_variable_genes_idx', 'n_corr_cell_cycle', 'n_hv', 'n_mito', 'n_pass', 'n_total', 'pp_h5ad_path'
+    obsm: 'X_clone', 'X_pca', 'X_scaled', 'X_umap'
+```
+
 ## Sources
 
 #### Repositories
