@@ -26,6 +26,12 @@ import larry
 dataset = "in_vitro" # can also choose from: "in_vivo" or "cytokine_perturbation"
 adata = larry.fetch(dataset)
 ```
+```
+AnnData object with n_obs × n_vars = 130887 × 25289
+    obs: 'Library', 'Cell barcode', 'Time point', 'Starting population', 'Cell type annotation', 'Well', 'SPRING-x', 'SPRING-y'
+    var: 'gene_name'
+    obsm: 'X_clone'
+```
 
 ## Sources
 
