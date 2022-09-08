@@ -21,9 +21,12 @@ from ._read_mtx_as_npz import _read_mtx_as_npz
 
 # module supporting functions: ------------------------------------------------
 def _load_LARRY_PathDict():
+    
+    data_dir = "../../_data/"
+    LARRY_PathDict_pkl = os.path.join(data_dir, "LARRY_PathDict.pkl")
 
     working_dir = os.path.dirname(os.path.dirname(__file__))
-    pkl_path = os.path.join(working_dir, "_data/LARRY_PathDict.pkl")
+    pkl_path = os.path.join(working_dir, LARRY_PathDict_pkl)
     return pydk.load_pickled(pkl_path), pkl_path
 
 def _mk_dataset_dict(LARRY_PathDict, dataset):

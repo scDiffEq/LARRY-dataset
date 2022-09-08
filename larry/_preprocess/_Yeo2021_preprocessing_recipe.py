@@ -26,9 +26,9 @@ class _Yeo2021_PreProcessing:
         "Tubb4b",
     ]
 
-    def __init__(self, adata):
+    def __init__(self, adata, data_dir="./"):
 
-        _check_for_preprocessing(self, adata)
+        _check_for_preprocessing(self, adata, data_dir)
 
     def setup_args(
         self,
@@ -129,13 +129,13 @@ class _Yeo2021_PreProcessing:
 
             
 # controller function: --------------------------------------------------------
-def _Yeo2021_preprocessing_recipe(adata, return_obj=False, **kwargs):
+def _Yeo2021_preprocessing_recipe(adata, data_dir="./", return_obj=False, **kwargs):
     
     """
     Run preprocessing according to Yeo, 2021 Nat. Commun. (PRESCIENT).
     """
     
-    pp = _Yeo2021_PreProcessing(adata)
+    pp = _Yeo2021_PreProcessing(adata, data_dir)
     pp.setup_args(**kwargs)
     pp.run()
     

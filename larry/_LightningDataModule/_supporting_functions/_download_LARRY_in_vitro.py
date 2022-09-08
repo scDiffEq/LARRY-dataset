@@ -5,6 +5,7 @@ import subprocess
 import pydk
 import os
 
+## TO-DO: adjust this to be a general cloud download shortcut if accessible to the user
 
 def _download_LARRY_in_vitro(
     gsutil_uri="scdiffeq-data/Weinreb2020/adata.fate_scores_added.h5ad",

@@ -7,3 +7,4 @@ __email__ = ", ".join(["vinyard@g.harvard.edu",])
 # -----------------------------------------------------------------------------
 from ._Yeo2021_preprocessing_recipe import _Yeo2021_preprocessing_recipe as Yeo2021_recipe
 from ._annotate_fate_test_train import _annotate_fate_test_train as annotate_fate_test_train
+from ._build_kNN import _build_annoy_adata as build_kNN
