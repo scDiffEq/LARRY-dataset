@@ -8,26 +8,11 @@ from torch.utils.data import DataLoader
 
 from .._fetch._fetch_data_from_github import _fetch_data_from_github as fetch
 from .._preprocess._Yeo2021_preprocessing_recipe import _Yeo2021_preprocessing_recipe
-from .._preprocess._annotate_fate_test_train import _annotate_fate_test_train
+from .._preprocess._annotate_test_train import _annotate_test_train
+from .._preprocess._add_data_from_supp_files import _add_data_from_supp_files
+from .._preprocess._build_kNN import _build_annoy_adata
 
 
-def _format_time(self, task, train_key, test_key, time_key):
-
-    """format time"""
-
-    self._task = task
-    self._train_key = train_key
-    self._test_key = test_key
-    self._time_key = time_key
-
-    time_dict = {
-        "timepoint_recovery": {self._train_key: [2, 6], self._test_key: [2, 4]},
-        "fate_prediction": {self._train_key: [2, 4, 6], self._test_key: [2, 4, 6]},
-    }
-
-    self._train_time = time_dict[self._task][self._train_key]
-    self._test_time = time_dict[self._task][self._test_key]
-    
 class LARRY_LightningDataModule(LightningDataModule):
     def __init__(
         self,
@@ -47,7 +32,7 @@ class LARRY_LightningDataModule(LightningDataModule):
         super().__init__()
 
         self.dataset = dataset
-        _format_time(self, task, train_key, test_key, time_key)
+        funcs.format_time(self, task, train_key, test_key, time_key)
         self._train_val_split = train_val_split
         self._batch_size = batch_size
         self._num_workers = num_workers
@@ -61,11 +46,10 @@ class LARRY_LightningDataModule(LightningDataModule):
         download_bar=False,
         silent=False,
         write_h5ad=True,
-        **kwargs,
+        **pp_kwargs,
     ):
 
         """fetch the data. do any required preprocessing."""
-
         self.adata = fetch(
             dataset=self.dataset,
             destination_dir=destination_dir,
@@ -75,10 +59,28 @@ class LARRY_LightningDataModule(LightningDataModule):
             write_h5ad=write_h5ad,
         )
         self.adata = _Yeo2021_preprocessing_recipe(
-            self.adata, return_obj=False, **kwargs
+            self.adata,
+            destination_dir=destination_dir,
+            return_obj=False,
+            **pp_kwargs,
         )
-        _annotate_fate_test_train(self.adata)
-
+        self.adata.uns['data_dir'] = destination_dir
+        _add_data_from_supp_files(self.adata)
+        _build_annoy_adata(self.adata)
+        self._kNN_idx = self.adata.uns['annoy_idx']
+        del self.adata.uns['annoy_idx']
+        
+        task_test_train = _annotate_test_train(
+            adata=self.adata,
+            task=self._task,
+            train_key=self._train_key,
+            test_key=self._test_key,
+            train_time=self._train_time,
+            test_time=self._test_time,
+            time_key=self._time_key,
+            silent=True,
+        )
+            
     def setup(self, stage=None):
 
         """Setup the data for feeding towards a specific stage"""

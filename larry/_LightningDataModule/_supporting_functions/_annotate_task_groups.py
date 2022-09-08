@@ -6,7 +6,7 @@ from licorice_font import font_format
 
 
 # -----------------------------------------------------------------------------
-from ..._preprocess._annotate_fate_test_train import _annotate_fate_test_train
+from ..._preprocess._annotate_test_train import _annotate_test_train
 
 
 # -----------------------------------------------------------------------------
@@ -72,3 +72,19 @@ class AnnDataTaskAnnotation:
         adata.obs.index = adata.obs.index.astype(str)
 
         return adata
+    
+    
+def _annotate_task_groups(adata, task, train_key, test_key, train_time, test_time, silent):
+    
+    task_test_train = AnnDataTaskAnnotation(
+            adata=adata,
+            train_key=train_key,
+            test_key=test_key,
+            silent=silent,
+        )
+    return task_test_train.run(
+                task=task,
+                train_time=train_time,
+                test_time=test_time,
+                time_key=time_key,
+            )

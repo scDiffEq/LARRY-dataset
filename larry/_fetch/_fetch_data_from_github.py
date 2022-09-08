@@ -38,7 +38,8 @@ class FetchData:
             silent=silent,
             write_h5ad=write_h5ad,
         )
-        self.LARRY_PathDict, self._pkl_path = f._load_LARRY_PathDict()
+        self._pkg_dir = os.path.dirname(os.path.dirname(__file__))
+        self.LARRY_PathDict, self._pkl_path = f._load_LARRY_PathDict(self._pkg_dir)
 
     def read_h5ad(self):
         self.adata = anndata.read_h5ad(self._h5ad_path)
@@ -48,7 +49,7 @@ class FetchData:
     def download_data(self):
 
         self.LARRY_PathDict = f._download_data(
-            self._dataset, destination_dir=self._destination_dir, bar=self._download_bar
+            self._dataset, destination_dir=self._destination_dir, pkg_dir=self._pkg_dir, bar=self._download_bar
         )
         self.dataset_dict = f._mk_dataset_dict(self.LARRY_PathDict, dataset=self._dataset)
 

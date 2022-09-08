@@ -20,13 +20,10 @@ from ._read_mtx_as_npz import _read_mtx_as_npz
 
 
 # module supporting functions: ------------------------------------------------
-def _load_LARRY_PathDict():
+def _load_LARRY_PathDict(pkg_dir):
     
-    data_dir = "../../_data/"
-    LARRY_PathDict_pkl = os.path.join(data_dir, "LARRY_PathDict.pkl")
+    pkl_path = os.path.join(pkg_dir, "_data", "LARRY_PathDict.pkl")
 
-    working_dir = os.path.dirname(os.path.dirname(__file__))
-    pkl_path = os.path.join(working_dir, LARRY_PathDict_pkl)
     return pydk.load_pickled(pkl_path), pkl_path
 
 def _mk_dataset_dict(LARRY_PathDict, dataset):
@@ -67,14 +64,14 @@ def _download_url(url, name=None, destination_dir="./", bar=False):
     return local_filepath
 
 
-def _download_data(dataset, destination_dir, bar=False):
+def _download_data(dataset, destination_dir, pkg_dir, bar=False):
 
     """
     (1) Updates LARRY_PathDict with downloaded filename
     (2) If file already downloaded, it is pointed to, btu not re-downloaded.
     """
 
-    LARRY_PathDict, pkl_path = _load_LARRY_PathDict()
+    LARRY_PathDict, pkl_path = _load_LARRY_PathDict(pkg_dir)
 
     for fname, furl in LARRY_PathDict["URLs"][dataset].items():
         LARRY_PathDict["filepaths"][dataset][fname] = _download_url(
