@@ -38,7 +38,7 @@ class _mtx_to_npz:
                 self.save_npz()
 
     def save_npz(self):
-        sparse.save_npz(self.npz_filepath, self.mtx)
+        scipy.sparse.save_npz(self.npz_filepath, self.mtx)
 
     def read_npz(self):
         if not self.check_npz():

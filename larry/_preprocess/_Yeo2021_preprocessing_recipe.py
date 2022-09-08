@@ -87,7 +87,7 @@ class _Yeo2021_PreProcessing:
         _annotate_pass_filter(
             self.adata, filter_on={"highly_variable": True, "corr_cell_cycle": False}
         )
-        _count_report_features(adata)
+        _count_report_features(self.adata)
 
     def annotate_clonal_barcodes(self):
         _annotate_clonal_barcodes(self.adata)

@@ -7,6 +7,7 @@ __email__ = ", ".join(["vinyard@g.harvard.edu",])
 # import packages: ------------------------------------------------------------
 import os
 import pydk
+import wget
 import scipy
 import pickle
 import anndata

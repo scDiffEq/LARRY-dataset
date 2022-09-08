@@ -17,6 +17,8 @@ setuptools.setup(
     include_package_data=True,
     install_requires=[
         "anndata>=0.8",
+        "pytorch-lightning>=1.7.5",
+        "wget>=3.2",
     ],
     classifiers = [
         "Development Status :: 2 - Pre-Alpha",
