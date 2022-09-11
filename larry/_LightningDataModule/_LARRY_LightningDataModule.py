@@ -36,6 +36,9 @@ class LARRY_LightningDataModule(LightningDataModule):
         self._train_val_split = train_val_split
         self._batch_size = batch_size
         self._num_workers = num_workers
+        self._weight_key = weight_key
+        self._fate_bias_key = fate_bias_key
+        self._use_key = use_key
         self._silent = silent
         self._stage_dict = {"fit": self._train_key, "test": self._test_key}
         
@@ -55,7 +58,7 @@ class LARRY_LightningDataModule(LightningDataModule):
             destination_dir=destination_dir,
             data_dir=data_dir,
             download_bar=download_bar,
-            silent=silent,
+            silent=True,
             write_h5ad=write_h5ad,
         )
         self.adata = _Yeo2021_preprocessing_recipe(
@@ -70,7 +73,7 @@ class LARRY_LightningDataModule(LightningDataModule):
         self._kNN_idx = self.adata.uns['annoy_idx']
         del self.adata.uns['annoy_idx']
         
-        task_test_train = _annotate_test_train(
+        self.adata = _annotate_test_train(
             adata=self.adata,
             task=self._task,
             train_key=self._train_key,
@@ -91,7 +94,7 @@ class LARRY_LightningDataModule(LightningDataModule):
             stage_adata,
             time_key=self._time_key,
             data_key=self._use_key,
-            weight_key=self._fate_score,
+            weight_key=self._weight_key,
             fate_bias_key=self._fate_bias_key,
         )
 
