@@ -5,7 +5,7 @@ import sys
 
 setuptools.setup(
     name='LARRY-dataset',
-    version='0.0.0',
+    version='0.0.1',
     python_requires='>3.7.0',
     author='Michael E. Vinyard - Harvard University - Massachussetts General Hospital - Broad Institute of MIT and Harvard',
     author_email='mvinyard@broadinstitute.org',
