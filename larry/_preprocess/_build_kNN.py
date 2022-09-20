@@ -18,8 +18,6 @@ def _build_annoy_adata(
     adata, use_key="X_pca", key_added="annoy_idx", metric="euclidean", n_trees=10
 ):
     
-    """
-    """
     
     # build kNN_save_path: -------------------------------------------------
     dir_path = os.path.dirname(adata.uns['pp_h5ad_path'])

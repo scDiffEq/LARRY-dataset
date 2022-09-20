@@ -2,7 +2,7 @@
 from ._fetch._fetch_data_from_github import _fetch_data_from_github
 from ._preprocess._Yeo2021_preprocessing_recipe import _Yeo2021_preprocessing_recipe
 
-from ._preprocess._add_data_from_supp_files import _add_data_from_supp_files
+from ._preprocess._add_extended_files import add_extended_files
 from ._preprocess._build_kNN import _build_annoy_adata
 
 def _in_vitro(destination_dir="./", return_obj=False, silent=True, fetch_kwargs={}, pp_kwargs={}):
@@ -20,7 +20,7 @@ def _in_vitro(destination_dir="./", return_obj=False, silent=True, fetch_kwargs=
         **pp_kwargs,
     )
     adata.uns['data_dir'] = destination_dir
-    _add_data_from_supp_files(adata)
+    add_extended_files(adata)
     _build_annoy_adata(adata)
     
     print("\n", adata)

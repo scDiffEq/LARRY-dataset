@@ -142,7 +142,7 @@ class AnnDataTaskAnnotation:
         return adata
     
     
-def _annotate_test_train(adata, task, train_key, test_key, train_time, test_time, time_key, silent):
+def annotate_test_train(adata, task, train_key, test_key, train_time, test_time, time_key, silent):
     
     task_test_train = AnnDataTaskAnnotation(
             adata=adata,

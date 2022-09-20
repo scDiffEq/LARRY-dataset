@@ -1,1 +1,3 @@
-include larry/_data/*
+include larry/_data/*.csv
+include larry/_data/*.pkl
+include larry/_data/*.npy
