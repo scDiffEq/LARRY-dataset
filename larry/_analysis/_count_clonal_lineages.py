@@ -6,8 +6,8 @@ from anndata import AnnData
 
 
 # -----------------------------------------------------------------------------
-def _count_clonal_lineages(
-    adata: AnnData, lineage_key: str = "clone_idx", groupby_key: str = "Time point"
+def count_clonal_lineages(
+    adata: AnnData, lineage_key: str = "clone_idx", groupby_key: str = "Time point", return_df: bool = False
 ) -> pd.DataFrame:
 
     """
@@ -41,5 +41,8 @@ def _count_clonal_lineages(
     count_df = (
         lineage_grouped[groupby_key].value_counts().unstack().fillna(0).astype(int)
     )
-
-    return count_df
+    
+    adata.uns['lineage_count_df'] = count_df
+    
+    if return_df:
+        return count_df
