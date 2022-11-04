@@ -9,7 +9,7 @@ __version__ = "0.0.1"
 
 
 # -----------------------------------------------------------------------------
-from ._LightningDataModule._LARRY_LightningDataModule import LARRY_LightningDataModule
+# from ._LightningDataModule._LARRY_LightningDataModule import LARRY_LightningDataModule
 from ._fetch._fetch_data_from_github import _fetch_data_from_github as fetch
 from ._in_vitro import _in_vitro as in_vitro
 
