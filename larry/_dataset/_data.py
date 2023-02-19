@@ -16,6 +16,8 @@ from ._url_path_interfaces import (
     inVivoURLPaths,
     CytokinePerturbationURLPaths,
 )
+from .._tools import annotate_clone_idx_in_obs
+
 
 from .klein_lab_pp_recipe import (
     highly_variable_genes,
@@ -69,7 +71,15 @@ class DataHandler:
         return self._X_clone
 
     def compose_adata(self):
-        return anndata.AnnData(X=self.X, dtype=self.X.dtype, obs=self.obs, var=self.var, obsm={"X_clone": self.X_clone})
+        self.adata = anndata.AnnData(
+            X=self.X,
+            dtype=self.X.dtype,
+            obs=self.obs,
+            var=self.var,
+            obsm={"X_clone": self.X_clone},
+        )
+        annotate_clone_idx_in_obs(self.adata)
+        return self.adata
 
     @property
     def raw_h5ad_path(self):
@@ -148,6 +158,9 @@ class inVitroData(DataHandler):
         if self.fate_prediction_h5ad_path.exists():
             print(f"{note} reading adata prepared for fate prediction task from .h5ad")
             return self.read_h5ad(self.fate_prediction_h5ad_path)
+        
+        self.adata = self.__call__()
+        
         return split_for_fate_prediction_task(
                 self.adata,
                 split_key=split_key,
@@ -160,6 +173,8 @@ class inVitroData(DataHandler):
             print(f"{note} reading adata prepared for timepoint recovery task from .h5ad")
             return self.read_h5ad(self.timepoint_recovery_h5ad_path)
         
+        self.adata = self.__call__()
+        
         return split_for_timepoint_recovery_task(
                 self.adata,
                 split_key=split_key,
@@ -171,6 +186,9 @@ class inVitroData(DataHandler):
         if self.transfer_learning_h5ad_path.exists():
             print(f"{note} reading adata prepared for transfer learning task from .h5ad")
             return self.read_h5ad(self.transfer_learning_h5ad_path)
+        
+        self.adata = self.__call__()
+        
         return split_for_transfer_learning_task(
                 self.adata,
                 split_key=split_key,

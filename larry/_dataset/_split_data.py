@@ -181,7 +181,7 @@ class SplitDataForTask:
 
         self.adata_task = self.concat_train_test(adata_task)
 
-        return adata_task
+        return self.adata_task
     
     
 def split_for_timepoint_recovery_task(adata, split_key="Time point", write_h5ad=False):

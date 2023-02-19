@@ -3,11 +3,11 @@
     
 from ._time_occupance import time_occupance
 
-        
+    
 def fated_idx(
     adata,
     fate_time=[4, 6],
-    exclude_fate: tuple = ("Annotation", ["undiff"]),
+    exclude_fate: tuple = ("Cell type annotation", ["undiff"]),
     lineage_key: str = "clone_idx",
     time_key: str = "Time point",
 ) -> list:
@@ -42,7 +42,7 @@ def annotate_fated(
     fate_time=[4, 6],
     key_added="fate_observed",
     t0_key_added="t0_fated",
-    exclude_fate: tuple = ("Annotation", ["undiff"]),
+    exclude_fate: tuple = ("Cell type annotation", ["undiff"]),
 ) -> None:
 
     """We use this function to denote lineages with cells at d2

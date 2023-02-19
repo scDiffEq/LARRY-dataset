@@ -16,6 +16,7 @@ class FateValues(AutoParseBase):
         adata,
         origin_time=[2],
         fate_time=[4, 6],
+        annotation_key="Cell type annotation",
         time_key="Time point",
         lineage_key="clone_idx",
     ):
@@ -32,14 +33,14 @@ class FateValues(AutoParseBase):
     def _count_values_at_lineage_fate(
         self,
         df,
-        fate_time=[4, 6],
-        value_key="Annotation",
-        time_key="Time point",
         labels_excluded=["undiff"],
     ):
         """df is the pandas.DataFrame obs table for a single clonal lineage"""
+        
+        value_key = self._annotation_key
+        
         return (
-            df.loc[df[time_key].isin(fate_time)]
+            df.loc[df[self._time_key].isin(self._fate_time)]
             .loc[~df[value_key].isin(labels_excluded)][value_key]
             .value_counts()
         )
@@ -54,6 +55,7 @@ def count_t0_cell_fates(adata, key_added="cell_fate_df", return_df=False):
         adata.uns["fate_counts"], on="clone_idx", how="left"
     )
     cell_fate_df.index = cell_fate_df.index.astype(str)
+    
     adata.obsm[key_added] = cell_fate_df
 
     print(f"- [NOTE] | Added cell x fate counts to: adata.obsm['{key_added}']")
@@ -61,13 +63,15 @@ def count_t0_cell_fates(adata, key_added="cell_fate_df", return_df=False):
         return cell_fate_df
 
 
-def d2_cell_fate_matrix(adata):
+def d2_cell_fate_matrix(
+    adata, time_key: str = "Time point", lineage_key: str = "clone_idx",
+):
     cell_fate_df = adata.obsm["cell_fate_df"].copy()
     df = adata.obs.copy()
-    d2_idx = df.loc[df["Time point"] == 2].index
+    d2_idx = df.loc[df[time_key] == 2].index
     d2_fate_idx = cell_fate_df.notna().index.isin(d2_idx)  # .reshape(-1, 1)
     cell_fate_df_ = cell_fate_df[d2_fate_idx].dropna()
-    return cell_fate_df_[cell_fate_df_.drop("clone_idx", axis=1).sum(1) > 0]
+    return cell_fate_df_[cell_fate_df_.drop(lineage_key, axis=1).sum(1) > 0]
 
 
 # -- API-facing function: ------------------------------------------------------------
@@ -75,6 +79,7 @@ def count_fate_values(
     adata,
     origin_time=[2],
     fate_time=[4, 6],
+    annotation_key="Cell type annotation",
     time_key="Time point",
     lineage_key="clone_idx",
     key_added="fate_counts",
@@ -87,16 +92,26 @@ def count_fate_values(
         adata,
         origin_time=origin_time,
         fate_time=fate_time,
+        annotation_key=annotation_key,
         time_key=time_key,
         lineage_key=lineage_key,
     )
     adata.uns[key_added] = lineage_fate_df = fate_values()
     print(f"- [NOTE] | Added lineage x fate counts to: adata.uns['{key_added}']")
 
-    annotate_fated(adata)
+    annotate_fated(
+        adata,
+        lineage_key=lineage_key,
+        time_key=time_key,
+        t0=origin_time[0],
+        fate_time=fate_time,
+        key_added="fate_observed",
+        t0_key_added="t0_fated",
+        exclude_fate=(annotation_key, ["undiff"]),
+                  )
     cell_fate_df = count_t0_cell_fates(adata, return_df=return_dfs)
 
-    d2_cell_fate_matrix
+    d2_cell_fate_df = d2_cell_fate_matrix(adata, time_key = time_key, lineage_key = lineage_key)
 
     if return_dfs:
-        return lineage_fate_df, cell_fate_df
+        return lineage_fate_df, cell_fate_df, d2_cell_fate_df

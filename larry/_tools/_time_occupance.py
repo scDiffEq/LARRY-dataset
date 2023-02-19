@@ -20,7 +20,7 @@ def filter_fate(
     fate_time=[4, 6],
     fate=["undiff"],
     time_key="Time point",
-    state_key="Annotation",
+    state_key="Cell type annotation",
 ):
     df = adata.obs.copy()
     
@@ -32,7 +32,7 @@ def filter_fate(
 def time_occupance(
     adata: anndata.AnnData,
     lineage_key: str = "clone_idx",
-    exclude_fate: tuple = ("Annotation", ["undiff"]),
+    exclude_fate: tuple = ("Cell type annotation", ["undiff"]),
     fate_time=[4, 6],
     time_key: str = "Time point",
     return_df=False,
