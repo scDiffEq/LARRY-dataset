@@ -1,6 +1,7 @@
 
 # -- import packages: ---------------------------------------------------------------------
 import pandas as pd
+from licorice_font import font_format
 
 
 # -- import local dependencies: -----------------------------------------------------------
@@ -58,7 +59,8 @@ def count_t0_cell_fates(adata, key_added="cell_fate_df", return_df=False):
     
     adata.obsm[key_added] = cell_fate_df
 
-    print(f"- [NOTE] | Added cell x fate counts to: adata.obsm['{key_added}']")
+    info = font_format("INFO", ['PURPLE'])
+    print(f"- [ {info} ] | Added cell x fate counts to: adata.obsm['{key_added}']")
     if return_df:
         return cell_fate_df
 
@@ -97,7 +99,8 @@ def count_fate_values(
         lineage_key=lineage_key,
     )
     adata.uns[key_added] = lineage_fate_df = fate_values()
-    print(f"- [NOTE] | Added lineage x fate counts to: adata.uns['{key_added}']")
+    info = font_format("INFO", ['PURPLE'])
+    print(f"- [ {info} ] | Added lineage x fate counts to: adata.uns['{key_added}']")
 
     annotate_fated(
         adata,

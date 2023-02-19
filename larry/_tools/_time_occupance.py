@@ -3,6 +3,7 @@
 import anndata
 import numpy as np
 import pandas as pd
+from licorice_font import font_format
 
 
 # -- define types: -----------------------------------------------------------------------
@@ -71,15 +72,18 @@ def time_occupance(
         
     df = adata_.obs.copy()
     t_query = sorted(df[time_key].unique())
+    t_query_str = sorted(df[time_key].astype(int).astype(str).unique())
     
     grouped_lineages = df.dropna(subset=[lineage_key]).groupby(lineage_key)
 
     adata.uns["time_occupance"] = time_occ_df = pd.DataFrame.from_dict(
         grouped_lineages.apply(_has_t, time_key, t_query).to_dict(),
         orient="index",
-        columns=t_query,
+        columns=t_query_str,
     )
-    msg = "- [NOTE] | Added lineage-time occupance to: adata.uns['time_occupance']"
+    
+    info = font_format("INFO", ['PURPLE'])
+    msg = f"- [ {info} ] | Added lineage-time occupance to: adata.uns['time_occupance']"
     print(msg)
 
     if return_df:

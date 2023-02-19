@@ -1,9 +1,10 @@
 
+from licorice_font import font_format
 
     
 from ._time_occupance import time_occupance
 
-    
+
 def fated_idx(
     adata,
     fate_time=[4, 6],
@@ -31,7 +32,7 @@ def fated_idx(
             return_df=True,
         )
     
-    return t_occ[t_occ[2] & t_occ[[4, 6]].any(axis=1)].index.tolist()
+    return t_occ[t_occ["2"] & t_occ[["4", "6"]].any(axis=1)].index.tolist()
 
 
 def annotate_fated(
@@ -60,11 +61,13 @@ def annotate_fated(
         lineage_key=lineage_key,
         time_key=time_key,
     )
+    
+    info = font_format("INFO", ['PURPLE'])
     df[key_added] = df[lineage_key].isin(f_idx)
-    msg = f"- [NOTE] | Fated cells annotated at: adata.obs['{key_added}']"
+    msg = f"- [ {info} ] | Fated cells annotated at: adata.obs['{key_added}']"
     print(msg)
     df[t0_key_added] = (df[time_key] == t0) & df[key_added]
-    msg = f"- [NOTE] | Fated cells (t=t0) annotated at: adata.obs['{t0_key_added}']"
+    msg = f"- [ {info} ] | Fated cells (t=t0) annotated at: adata.obs['{t0_key_added}']"
     print(msg)
 
     adata.obs = df

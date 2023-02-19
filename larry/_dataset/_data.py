@@ -16,7 +16,7 @@ from ._url_path_interfaces import (
     inVivoURLPaths,
     CytokinePerturbationURLPaths,
 )
-from .._tools import annotate_clone_idx_in_obs
+from .._tools import annotate_clone_idx_in_obs, count_fate_values
 
 
 from .klein_lab_pp_recipe import (
@@ -79,6 +79,17 @@ class DataHandler:
             obsm={"X_clone": self.X_clone},
         )
         annotate_clone_idx_in_obs(self.adata)
+        if self._dataset == "in_vitro":
+            count_fate_values(
+                self.adata,
+                origin_time=[2],
+                fate_time=[4, 6],
+                annotation_key='Cell type annotation',
+                time_key='Time point',
+                lineage_key='clone_idx',
+                key_added='fate_counts',
+                return_dfs=False,
+            )
         return self.adata
 
     @property
@@ -123,24 +134,24 @@ class DataHandler:
     def __call__(self):        
         
         if self.gene_filtered_h5ad_path.exists():
-            print(f"{note} reading pre-filtered adata from .h5ad")
+            print(f"{note} Reading pre-filtered {self._dataset} adata from .h5ad")
             self.adata = self.read_h5ad(self.gene_filtered_h5ad_path)
             return self.adata
 
         if self.raw_h5ad_path.exists():
-            print(f"{note} reading raw adata from .h5ad")
+            print(f"{note} Reading raw {self._dataset} adata from .h5ad")
             self.adata = self.read_h5ad(self.raw_h5ad_path)
         else:
-            print(f"{note} composing AnnData")
+            print(f"{note} Composing LARRY {self._dataset} dataset to AnnData.")
             self.adata = self.compose_adata()
-            print(f"{note} saving raw adata to .h5ad")
+            print(f"{note} Saving raw adata to .h5ad")
             self.to_h5ad(self.raw_h5ad_path)
         
-        print(f"{note} calling highly variable genes")
+        print(f"{note} Calling highly variable genes")
         highly_variable_genes(self.adata)
-        print(f"{note} removing cell cycle correlated genes")
+        print(f"{note} Removing cell cycle correlated genes")
         remove_cell_cycle_correlated_genes(self.adata)
-        print(f"{note} saving gene-filtered adata to .h5ad")
+        print(f"{note} Saving gene-filtered adata to .h5ad")
         self.to_h5ad(self.gene_filtered_h5ad_path)
         
         return self.adata
@@ -156,7 +167,7 @@ class inVitroData(DataHandler):
     def fate_prediction(self, split_key="Well", write_h5ad=False):
         
         if self.fate_prediction_h5ad_path.exists():
-            print(f"{note} reading adata prepared for fate prediction task from .h5ad")
+            print(f"{note} Reading adata prepared for fate prediction task from .h5ad")
             return self.read_h5ad(self.fate_prediction_h5ad_path)
         
         self.adata = self.__call__()
@@ -170,7 +181,7 @@ class inVitroData(DataHandler):
     def timepoint_recovery(self, split_key="Time point"):
         
         if self.timepoint_recovery_h5ad_path.exists():
-            print(f"{note} reading adata prepared for timepoint recovery task from .h5ad")
+            print(f"{note} Reading adata prepared for timepoint recovery task from .h5ad")
             return self.read_h5ad(self.timepoint_recovery_h5ad_path)
         
         self.adata = self.__call__()
@@ -184,7 +195,7 @@ class inVitroData(DataHandler):
     def transfer_learning(self, split_key="Time point"):
         
         if self.transfer_learning_h5ad_path.exists():
-            print(f"{note} reading adata prepared for transfer learning task from .h5ad")
+            print(f"{note} Reading adata prepared for transfer learning task from .h5ad")
             return self.read_h5ad(self.transfer_learning_h5ad_path)
         
         self.adata = self.__call__()
