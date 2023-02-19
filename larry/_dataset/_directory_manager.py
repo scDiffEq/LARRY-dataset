@@ -1,7 +1,9 @@
 
 # -- import packages: ----------------------------------------------------------
+import os
 from pathlib import Path
 from licorice_font import font_format
+
 
 # -- Main class: ---------------------------------------------------------------
 class DirectoryManager:
@@ -28,16 +30,20 @@ class DirectoryManager:
 
     def __call__(self):
 
-        target_dir = []
+        target_dir = [""]
 
         for subdir in self.split_path:
             target_dir.append(subdir)
-            subdir_ = Path("/".join(target_dir)).absolute()
+            subdir_ = Path("/".join(target_dir))
             if not subdir_.exists():
                 self.__mkdir__(subdir_)
 
 
 # -- API-facing function: ------------------------------------------------------
 def mkdir(path: str, silent: bool = False)->None:
-    dir_manager = DirectoryManager(path = path)
+
+    if not Path(path).is_dir():
+        path = os.path.dirname(path)
+
+    dir_manager = DirectoryManager(path = path, silent = silent)
     dir_manager()
