@@ -33,9 +33,10 @@ note = f"- [ {info} ] |"
 
 # -- base class: ---------------------------------------------------------------
 class DataHandler:
-    def __init__(self):
+    def __init__(self, silent = False):
         # must set self._url_paths
         self.URLPaths.download()
+        self._silent = silent
         
     @property
     def URLPaths(self):
@@ -104,7 +105,10 @@ class DataHandler:
             self.adata.write_h5ad(h5ad_path)
         
     def read_h5ad(self, h5ad_path):
-        return anndata.read_h5ad(h5ad_path)
+        self.adata = anndata.read_h5ad(h5ad_path)
+        if not self._silent:
+            print(self.adata)
+        return self.adata
 
     def __call__(self):        
         
@@ -135,8 +139,9 @@ class DataHandler:
 class inVitroData(DataHandler):
     _url_paths = inVitroURLPaths()
     _dataset = "in_vitro"
-    def __init__(self):
-        super(inVitroData, self).__init__()
+    def __init__(self, silent = False):
+        super(inVitroData, self).__init__(silent=silent)
+        
         
     def fate_prediction(self, split_key="Well", write_h5ad=False):
         
@@ -175,12 +180,12 @@ class inVitroData(DataHandler):
 class inVivoData(DataHandler):
     _url_paths = inVivoURLPaths()
     _dataset = "in_vivo"
-    def __init__(self):
-        super(inVivoData, self).__init__()
+    def __init__(self, silent = False):
+        super(inVivoData, self).__init__(silent=silent)
 
 
 class CytokinePerturbationData(DataHandler):
     _url_paths = CytokinePerturbationURLPaths()
     _dataset = "cytokine_perturbation"
-    def __init__(self):
-        super(CytokinePerturbationData, self).__init__()
+    def __init__(self, silent = False):
+        super(CytokinePerturbationData, self).__init__(silent=silent)
