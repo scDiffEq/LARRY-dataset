@@ -52,40 +52,32 @@ class SplitDataForTask:
         if not hasattr(self, "_X_train"):
             self._X_train = self.adata[self.train_idx, self.var_df["use_genes"]].X.A
         return self._X_train
+    
+    def t_elapsed_message(self, message):
+        msg = "- time elapsed: {:.2f}".format(time.time() - self.t0)
+        print("{:<23} | {}".format(msg, message))
 
     @property
     def X_train_scaled(self):
         if not hasattr(self, "_X_train_scaled"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f}  | Fitting scaling model on raw training data.".format(
-                    t_elapsed
-                )
-            )
+            message = "Fitting scaling model on raw training data."
+            self.t_elapsed_message(message)
             self._X_train_scaled = self.dim_reducer.Scaler.fit_transform(self.X_train)
         return self._X_train_scaled
 
     @property
     def X_train_pca(self):
         if not hasattr(self, "_X_train_pca"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f} | Fitting PCA model on scaled training data.".format(
-                    t_elapsed
-                )
-            )
+            message = "Fitting PCA model on scaled training data."
+            self.t_elapsed_message(message)
             self._X_train_pca = self.dim_reducer.PCA.fit_transform(self.X_train_scaled)
         return self._X_train_pca
 
     @property
     def X_train_umap(self):
         if not hasattr(self, "_X_train_umap"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f} | Fitting UMAP model on training PCA projection.".format(
-                    t_elapsed
-                )
-            )
+            message = "Fitting UMAP model on training PCA projection."
+            self.t_elapsed_message(message)
             self._X_train_umap = self.dim_reducer.UMAP.fit_transform(self.X_train_pca)
         return self._X_train_umap
 
@@ -98,36 +90,24 @@ class SplitDataForTask:
     @property
     def X_test_scaled(self):
         if not hasattr(self, "_X_test_scaled"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f} | Transforming raw test data using pre-fit scaling model.".format(
-                    t_elapsed
-                )
-            )
+            message = "Transforming raw test data using pre-fit scaling model."
+            self.t_elapsed_message(message)
             self._X_test_scaled = self.dim_reducer.Scaler.transform(self.X_test)
         return self._X_test_scaled
 
     @property
     def X_test_pca(self):
         if not hasattr(self, "_X_test_pca"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f} | Transforming scaled test data using pre-fit PCA model.".format(
-                    t_elapsed
-                )
-            )
+            message = "Transforming scaled test data using pre-fit PCA model."
+            self.t_elapsed_message(message)
             self._X_test_pca = self.dim_reducer.PCA.transform(self.X_test_scaled)
         return self._X_test_pca
 
     @property
     def X_test_umap(self):
         if not hasattr(self, "_X_test_umap"):
-            t_elapsed = time.time() - self.t0
-            print(
-                " - time elapsed: {:.2f} | Transforming PCA test data using pre-fit UMAP model.".format(
-                    t_elapsed
-                )
-            )
+            message = "Transforming PCA test data using pre-fit UMAP model."
+            self.t_elapsed_message(message)
             self._X_test_umap = self.dim_reducer.UMAP.transform(self.X_test_pca)
         return self._X_test_umap
 
