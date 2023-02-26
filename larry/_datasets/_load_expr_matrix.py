@@ -35,5 +35,7 @@ def load_expr_matrix(path):
         print("Loading expression matrix as `.mtx`. This is slow. Will save as `.npz` for much faster future loading.")
         expr_mat.read_mtx()
         expr_mat.save_mtx_as_npz()
+        
+    mtx = scipy.sparse.load_npz(expr_mat.npz_path)
 
-    return scipy.sparse.load_npz(expr_mat.npz_path)
+    return 

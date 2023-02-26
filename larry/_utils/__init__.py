@@ -8,3 +8,5 @@ from ._sparse_mtx_operations import (
     normalize_variance,
     sparse_zscore,
 )
+
+from ._fetch_data import fetch_data
