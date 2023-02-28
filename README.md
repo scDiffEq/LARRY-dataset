@@ -1,4 +1,13 @@
-# LARRY dataset
+# <img alt="LARRY-dataset-logo" src="/docs/imgs/LARRY_logo.svg" width="300">
+
+This is a Python package that downloads and preprocesses the LARRY dataset from the AllonKleinLab GitHub repository. The LARRY dataset is a group of single-cell lineage-traced datasets that have been used to study transcriptional landscapes and cell fate during differentiation [[1](#References)]. There are three datasets within this group of datasets, all using hematopoietic progenitor cells from mouse bone marrow and the LARRY lentiviral barcoding strategy.
+
+1. ***in vitro***
+2. ***in vivo*** - transplanted into mice
+3. **Cytokine-perturbed** (*in vitro*) - split between various cytokine culture conditions.
+
+The package includes functions to download the LARRY dataset, format the files into [`AnnData`](https://anndata.readthedocs.io/en/latest/) and perform preprocessing / gene-filtering steps. The preprocessed data can then be split into test and training sets for use in different machine learning tasks. Dimension reduction can be performed after data splitting to respect information leakage or on all of the data.
+
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/larry-dataset.svg)](https://pypi.python.org/pypi/larry-dataset/)
 [![PyPI version](https://badge.fury.io/py/larry-dataset.svg)](https://badge.fury.io/py/larry-dataset)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -67,8 +76,8 @@ AnnData object with n_obs × n_vars = 130887 × 25289
 * [**AllonKleinLab**/paper-data](https://github.com/AllonKleinLab/paper-data/tree/master/Lineage_tracing_on_transcriptional_landscapes_links_state_to_fate_during_differentiation)
 * [**AllonKleinLab**/LARRY](https://github.com/AllonKleinLab/LARRY)
 
-#### Reference
-* Weinreb, C., Rodriguez-Fraticelli, A., Camargo, F.D., Klein, A.M. <a href="https://science.sciencemag.org/content/367/6479/eaaw3381">**Lineage tracing on transcriptional landscapes links state to fate during differentiation**</a>. *Science* **80** (2020). https://doi.org/10.1126/science.aaw3381
+#### References
+1. Weinreb, C., Rodriguez-Fraticelli, A., Camargo, F.D., Klein, A.M. <a href="https://science.sciencemag.org/content/367/6479/eaaw3381">**Lineage tracing on transcriptional landscapes links state to fate during differentiation**</a>. *Science* **80** (2020). https://doi.org/10.1126/science.aaw3381
 
 ---
 
