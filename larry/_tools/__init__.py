@@ -10,3 +10,5 @@ from ._to_anndataset import to_AnnDataset
 from ._fetch_fate_bias_data import fetch_fate_bias_data
 
 from ._annotate_clone_idx_in_obs import annotate_clone_idx_in_obs
+
+from ._subset_clonal import subset_clonal
