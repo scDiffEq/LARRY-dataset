@@ -86,8 +86,8 @@ class InterpolationTask(Callback):
         d6_loss = self.Loss(X_hat[2], self.X_d6).item()
         
         if not self.silent:
-            print("Day 4 loss: {}".format(d4_loss))
-            print("Day 6 loss: {}".format(d6_loss))
+            print("Day 4 loss: {:.2f}".format(d4_loss))
+            print("Day 6 loss: {:.2f}".format(d6_loss))
             
         self.log("eval_d4_loss", d4_loss)
         self.log("eval_d6_loss", d6_loss)
