@@ -6,7 +6,7 @@ __email__ = ", ".join(["vinyard@g.harvard.edu"])
 
 
 # -- import packages: ----------------------------------------------------------
-from scdiffeq.core import SinkhornDivergence
+from scdiffeq.core.lightning_models.base import SinkhornDivergence
 from pytorch_lightning import Callback
 from autodevice import AutoDevice
 import numpy as np
@@ -77,6 +77,7 @@ class InterpolationTask(Callback):
 
     def on_train_epoch_end(self, trainer, DiffEq):
         """Call"""
+                
         if self.potential:
             X_hat = self.forward_with_grad(DiffEq)
         else:
@@ -86,8 +87,12 @@ class InterpolationTask(Callback):
         d6_loss = self.Loss(X_hat[2], self.X_d6).item()
         
         if not self.silent:
-            print("Day 4 loss: {:.2f}".format(d4_loss))
-            print("Day 6 loss: {:.2f}".format(d6_loss))
+            print("- Epoch: {:<5}| Day 4 loss: {:.2f} | Day 6 loss: {:.2f}".format(
+                DiffEq.current_epoch,
+                d4_loss,
+                d6_loss,
+            ),
+                 )
             
         self.log("eval_d4_loss", d4_loss)
         self.log("eval_d6_loss", d6_loss)
