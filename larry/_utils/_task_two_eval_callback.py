@@ -48,7 +48,7 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
     @property
     def _TESTING(self):
         # for dev
-        return True
+        return False
 
     @property
     def t(self):
