@@ -8,6 +8,7 @@ import sklearn
 import autodevice
 import lightning
 import torch
+import os
 
 
 from ._abc_parse import ABCParse
@@ -15,6 +16,7 @@ from ._count_fate_values import count_fate_values
 
 
 from ._multi_fated_lineage_prediction_results import MultifatedLineagePredictionResults
+from ._multiclass_precision_recall import MulticlassPrecisionRecall
 from ._lineage_classification import LineageClassification
 from ._model_evaluator import ModelEvaluator
 from ._confusion_matrix import ConfusionMatrix
@@ -24,19 +26,29 @@ from ._accuracy_scores import AccuracyScores
 class TaskTwoEvalCallback(lightning.Callback, ABCParse):
     def __init__(
         self,
-        adata,
-        kNN_Graph,
-        PCA_model,
+        model,
         UMAP_model=None,
         t=torch.Tensor([2, 4, 6]),
         device=autodevice.AutoDevice(),
+        N = 2000,
         use_key="X_scaled",
+        PR_threshold = 0.3,
     ):
         
-        self.__parse__(locals(), private = ['t', 'device'])
+        adata = model.adata
+        kNN_Graph = model.kNN_Graph
+        PCA = model.reducer.PCA
+        
+        self.__parse__(locals(), private = ['N', 't', 'device', 'PR_threshold'], ignore = ["model"])
 
         count_fate_values(self.adata)
         self.df = self.adata.obs.copy()
+        
+        
+    @property
+    def _TESTING(self):
+        # for dev
+        return True
 
     @property
     def t(self):
@@ -54,6 +66,8 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
 
     @property
     def t0_idx(self):
+        if self._TESTING:
+            return self.fate_df.index[:15]
         return self.fate_df.index
 
     # -- Format ground truth comparison data and get labels, etc.: ---------
@@ -66,6 +80,9 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
         F_obs_ = cell_fate_df[
             cell_fate_df.drop(["Undifferentiated", "clone_idx"], axis=1).sum(1) > 0
         ].drop(["Undifferentiated", "clone_idx"], axis=1)
+        
+        if self._TESTING:
+            return sdq.tl.sum_norm_df(F_obs_)[:15]
         return sdq.tl.sum_norm_df(F_obs_)
 
     @property
@@ -82,12 +99,6 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
     def F_obs_pred(self):
         # return only those that were actually predicted
         return self.F_obs.loc[self.F_obs.index.isin(self.F_hat.index)]
-
-    @property
-    def accuracy_scores(self):
-        
-        self._accuracy_scores = AccuracyScores()
-        return self._accuracy_scores()
         
 #         return sklearn.metrics.accuracy_score(
 #             y_true=self.F_obs_pred.idxmax(1).values, y_pred=self.F_hat.idxmax(1).values
@@ -111,18 +122,36 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
     def on_fit_end(self, trainer, pl_module, *args, **kwargs):
         
         self._log_dir = trainer.log_dir
-
-        self.model_eval = ModelEvaluator(pl_module)
-        self.model_eval.predict(
-            self.adata, self.t, t0_idx=self.t0_idx, use_key=self.use_key
+        
+        self.model_eval = ModelEvaluator(
+            DiffEq = pl_module.to("cuda:0"),
+            Graph = self.kNN_Graph,
+            PCA = self.PCA,
         )
-        self.model_eval.pca_transform(self.PCA_model)
-        self._F = self.model_eval.nn_labels(self.kNN_Graph, "Cell type annotation")
+        
+        self._F = self.model_eval(
+            adata = self.adata,
+            t = self.t,
+            t0_idx = self.t0_idx,
+            obs_key = "Cell type annotation",
+            use_key = self.use_key,
+            N = self._N,
+        )
         self.F = sdq.tl.sum_norm_df(self._F.drop("Undifferentiated", axis=1).copy()).fillna(0)
         self.F.to_csv(os.path.join(self.LOGPATH, "fate_matrix.csv"))
-        self._plot_fate_bias_clustermap()
         
-        self.accuracy_scores
+        # self.model_eval = ModelEvaluator(pl_module)
+        # self.model_eval.predict(
+        #    self.adata, self.t, t0_idx=self.t0_idx, use_key=self.use_key
+        # )
+        # self.model_eval.pca_transform(self.PCA_model)
+        # self._F = self.model_eval.nn_labels(self.kNN_Graph, "Cell type annotation")
+        self._plot_fate_bias_clustermap()
+#         self.accuracy_scores
+
+        self.accuracy_scores = AccuracyScores(self.F_obs, self.F_hat)
+        self.accuracy_scores(self.LOGPATH)
+
 
         lineage_classification = LineageClassification(self.F_obs)
         self.conf_mtx = ConfusionMatrix()
@@ -154,6 +183,14 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
 
         self.F_obs_pred.to_csv(os.path.join(self.LOGPATH, "F_obs_pred.csv"))
         self.F_hat.to_csv(os.path.join(self.LOGPATH, "F_hat.csv"))
-
-        NCE = sdq.tl.NegativeCrossEntropy()
-        NCE(self.F_obs_pred, self.F_hat)
+        
+        # -- precision recall: ------------------------------------------------
+        self.multiclass_precision_recall = MulticlassPrecisionRecall(
+            threshold=self._PR_threshold,
+            minor_fate_key="minor",
+        )
+        self.multiclass_precision_recall(
+            F_obs = self.F_obs,
+            F_hat = self.F_hat,
+            save_path = self.LOGPATH,
+        )
