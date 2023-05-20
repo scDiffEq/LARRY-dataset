@@ -5,8 +5,8 @@ import sys
 
 setuptools.setup(
     name='LARRY-dataset',
-    version='0.0.1',
-    python_requires='>3.7.0',
+    version='0.0.2rc0',
+    python_requires='>3.9.0',
     author='Michael E. Vinyard - Harvard University - Massachussetts General Hospital - Broad Institute of MIT and Harvard',
     author_email='mvinyard@broadinstitute.org',
     url = 'https://github.com/pinellolab/LARRY-dataset',
@@ -16,8 +16,8 @@ setuptools.setup(
     packages = setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-        "anndata>=0.8",
-        "pytorch-lightning>=1.7.5",
+        "anndata>=0.9.1",
+        "pytorch-lightning>=2.0.2",
         "wget>=3.2",
     ],
     classifiers = [
