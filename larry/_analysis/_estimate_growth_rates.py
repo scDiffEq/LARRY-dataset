@@ -110,14 +110,14 @@ def plot_growth_rate_UMAPs(
         adata.obs.copy(), adata.uns["d2_lin_mask"], t0=2, time_key="Time point"
     )
 
-    fig, axes = vinplots.quick_UMAP(
-        nplots=2, ncols=2, kwargs={"hspace": 0.2, "figsize_width": 1.2}, titles=titles
-    )
+    fig, axes = vinplots.quick_plot(nplots=2, ncols=2, hspace=0.2, figsize_width=1.2, rm_ticks=True, spines_to_delete="all")
+    
     for n, ax in enumerate(axes):
         _background_scatter_UMAP(ax, X_umap)
         _plot_continuous_highlight_UMAP(
             ax, X_umap, plot_idx, c=growth_rates[plot_keys[n]], cax=ax, vmin=vmin, vmax=vmax
         )
+        ax.set_title(titles[n])
 
 # supporting functions: -------------------------------------------------------
 def _enumerate_time_pairs(t):
