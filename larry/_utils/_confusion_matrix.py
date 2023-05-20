@@ -10,17 +10,21 @@ import os
 
 from ._abc_parse import ABCParse
 from ._multi_fate_color_map import mk_multifate_cmap
+from ._larry_in_vitro_cmap import LARRY_in_vitro_cmap
 
 NoneType = type(None)
 
 class ConfusionMatrix(ABCParse):
-    def __init__(self):
+    def __init__(self, ):
 
         self.__parse__(locals())
         if not os.path.exists("label_cmap.csv"):
             self.label_cmap = mk_multifate_cmap()
         else:
-            self.label_cmap = pd.read_csv("label_cmap.csv")
+            label_cmap = pd.read_csv("label_cmap.csv", index_col = 0)
+            _in_vitro_cmap = pd.DataFrame.from_dict(LARRY_in_vitro_cmap, orient = "index").reset_index()
+            _in_vitro_cmap.columns = label_cmap.columns
+            self.label_cmap = pd.concat([label_cmap, _in_vitro_cmap]).drop_duplicates()
 
     @property
     def labels(self):
@@ -59,6 +63,12 @@ class ConfusionMatrix(ABCParse):
         if isinstance(self._vmax, NoneType):
             return np.round(self.conf_mtx.max(), -2)
         return self._vmax
+    
+    @property
+    def _CMAP(self):
+        cmap_labels = []
+        _df = self.label_cmap.copy()
+        return [_df.loc[_df['label'] == label]['color'].values[0] for label in self.labels]
 
     def __heatmap__(self):
         
@@ -71,8 +81,8 @@ class ConfusionMatrix(ABCParse):
             yticklabels=self.labels,
             # need to fix here.... not sure why this doesn't work....?
             # needs re-ordering of some sort....
-            row_colors=self.label_cmap["color"].to_numpy(),
-            col_colors=self.label_cmap["color"].to_numpy(),
+            row_colors=self._CMAP, # self.label_cmap["color"].to_numpy(),
+            col_colors=self._CMAP, # self.label_cmap["color"].to_numpy(),
             row_cluster=False,
             col_cluster=False,
             fmt="",
@@ -104,4 +114,3 @@ class ConfusionMatrix(ABCParse):
 
         if save:
             plt.savefig(save)
-

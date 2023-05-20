@@ -6,7 +6,7 @@ __email__ = ", ".join(["vinyard@g.harvard.edu"])
 
 
 # -- import packages: ----------------------------------------------------------
-from scdiffeq.core.lightning_models.base import SinkhornDivergence
+# from scdiffeq.core.lightning_models.base import SinkhornDivergence
 from pytorch_lightning import Callback
 from autodevice import AutoDevice
 import numpy as np
