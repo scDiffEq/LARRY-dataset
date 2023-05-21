@@ -1,10 +1,4 @@
 
-
-__module_name__ = "_interpolation_task.py"
-__doc__ = """Callback for passing the test set to measure interpolation of a withheld timepoint."""
-__author__ = ", ".join(["Michael E. Vinyard"])
-__email__ = ", ".join(["vinyard@g.harvard.edu"])
-
 # -- import local dependencies: -----
 from ._interpolation_data import InterpolationData
 from ... import utils
@@ -26,6 +20,7 @@ class InterpolationTask(utils.ABCParse):
         n_samples=10_000,
         lineage_key="clone_idx",
         device=autodevice.AutoDevice(),
+        backend = "tensorized",
         *args,
         **kwargs,
     ):
@@ -48,21 +43,37 @@ class InterpolationTask(utils.ABCParse):
     def forward_without_grad(self, DiffEq):
         """Forward integrate over the model without gradients."""
         with torch.no_grad():
-            return DiffEq.forward(self.X0, self.t)
+            X_hat = DiffEq.forward(self.data.X0, self.data.t)
+            return self._parse_forward_out(X_hat)
 
     def forward_with_grad(self, DiffEq):
         """Forward integrate over the model retaining gradients."""
         torch.set_grad_enabled(True)
-        return DiffEq.forward(self.X0, self.t)
+        X_hat = DiffEq.forward(self.data.X0, self.data.t)
+        return self._parse_forward_out(X_hat)
+    
+    @property
+    def potential(self):
+        return "Potential" in str(self.DiffEq)
+    
+    def _parse_forward_out(self, X_hat):
+        """to account for KLDiv"""
+        if isinstance(X_hat, tuple):
+            return X_hat[0]
+        return X_hat
+        
 
     def __call__(self, trainer, DiffEq, *args, **kwargs):
+        
+        self.__update__(locals())
+        
         if self.potential:
             X_hat = self.forward_with_grad(DiffEq)
         else:
             X_hat = self.forward_without_grad(DiffEq)
-
-        d4_loss = self.Loss(X_hat[1], self.data.X_test_d4).item()
-        d6_loss = self.Loss(X_hat[2], self.data.X_train_d6).item()
+        
+        d4_loss = self.SinkhornDivergence(X_hat[1], self.data.X_test_d4).item()
+        d6_loss = self.SinkhornDivergence(X_hat[2], self.data.X_train_d6).item()
 
         if not self.silent:
             print(
