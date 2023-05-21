@@ -10,6 +10,8 @@ import autodevice
 import torch
 
 
+NoneType = type(None)
+
 class InterpolationTask(utils.ABCParse):
     def __init__(
         self,
@@ -20,7 +22,9 @@ class InterpolationTask(utils.ABCParse):
         n_samples=10_000,
         lineage_key="clone_idx",
         device=autodevice.AutoDevice(),
-        backend = "tensorized",
+        backend = "auto",
+        silent = False,
+        PCA = None,
         *args,
         **kwargs,
     ):
@@ -61,7 +65,12 @@ class InterpolationTask(utils.ABCParse):
         if isinstance(X_hat, tuple):
             return X_hat[0]
         return X_hat
-        
+    
+    def _dimension_reduce_pca(self, X_hat):
+        return torch.stack(
+            [torch.Tensor(self.PCA.transform(x)) for x in X_hat.detach().cpu().numpy()]
+        ).to(self.device)     
+
 
     def __call__(self, trainer, DiffEq, *args, **kwargs):
         
@@ -71,6 +80,9 @@ class InterpolationTask(utils.ABCParse):
             X_hat = self.forward_with_grad(DiffEq)
         else:
             X_hat = self.forward_without_grad(DiffEq)
+            
+        if not isinstance(self.PCA, NoneType):
+            X_hat = self._dimension_reduce_pca(X_hat)
         
         d4_loss = self.SinkhornDivergence(X_hat[1], self.data.X_test_d4).item()
         d6_loss = self.SinkhornDivergence(X_hat[2], self.data.X_train_d6).item()

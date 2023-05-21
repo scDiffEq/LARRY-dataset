@@ -35,7 +35,7 @@ class InterpolationData(utils.ABCParse):
 
     @property
     def X0(self):
-        return utils.fetch(
+        return utils.fetch_data(
             self.adata[self.t0_idx], use_key=self.use_key, device=self.device
         )
 
@@ -52,15 +52,15 @@ class InterpolationData(utils.ABCParse):
         self._t = sorted(self.df[self.time_key].unique())
         self.set_clonal()
 
-        self._d4_test = utils.fetch(
+        self._d4_test = utils.fetch_data(
             self.adata[self.df_clonal_d4.index],
-            use_key=self.use_key,
+            use_key="X_pca", # always pca for d4, d6
             device=self.device,
         )
 
-        self._d6_train = utils.fetch(
+        self._d6_train = utils.fetch_data(
             self.adata[self.df_clonal_d6.index],
-            use_key=self.use_key,
+            use_key="X_pca", # always pca for d4, d6
             device=self.device,
         )
 

@@ -8,17 +8,25 @@ from .. import utils
 from .. import tasks
 
 
-class InterpolationCallback(utils.ABCParse):
+class InterpolationCallback(lightning.Callback, utils.ABCParse):
     def __init__(
         self,
-        adata,
-        time_key="Time point",
-        use_key="X_pca",
-        t0=2,
+        model,
         n_samples=10_000,
         lineage_key="clone_idx",
         device=autodevice.AutoDevice(),
+        backend = "auto",
+        silent = False,
+        *args,
+        **kwargs,
     ):
+        
+        adata = model.adata
+        use_key = model._use_key
+        time_key = model._time_key
+        t0 = model.t[0].item()
+        PCA = model.reducer.PCA
+
         self.__parse__(locals())
 
         self.interpolation_task = tasks.interpolation.InterpolationTask(**self._TASK_KWARGS)
