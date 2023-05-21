@@ -1,6 +1,6 @@
 # __init__.py for dataset
 
-from ._dimension_reduction import DimensionReduction
+# from ._dimension_reduction import DimensionReduction
 from ._directory_manager import mkdir
 from ._url_path_interfaces import (
     inVitroURLPaths,

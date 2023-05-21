@@ -3,9 +3,9 @@ import sklearn
 import umap
 
 
-from .._utils import AutoParseBase
+from .. import utils
 
-class DimensionReduction(AutoParseBase):
+class DimensionReduction(utils.ABCParse):
     def __init__(self, n_pcs=50, n_components=2, metric="euclidean", n_neighbors=30):
 
         self.__configure__(locals())

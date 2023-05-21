@@ -19,8 +19,10 @@ from ._multi_fated_lineage_prediction_results import MultifatedLineagePrediction
 from ._multiclass_precision_recall import MulticlassPrecisionRecall
 from ._lineage_classification import LineageClassification
 from ._model_evaluator import ModelEvaluator
-from ._confusion_matrix import ConfusionMatrix
 from ._accuracy_scores import AccuracyScores
+
+from .. import _plotting as pl
+
 
 
 class TaskTwoEvalCallback(lightning.Callback, ABCParse):
@@ -154,7 +156,7 @@ class TaskTwoEvalCallback(lightning.Callback, ABCParse):
 
 
         lineage_classification = LineageClassification(self.F_obs)
-        self.conf_mtx = ConfusionMatrix()
+        self.conf_mtx = pl.ConfusionMatrix()
         self.conf_mtx(
             self.F_obs,
             self.F_hat,

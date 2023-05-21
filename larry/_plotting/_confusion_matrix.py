@@ -8,13 +8,13 @@ import sklearn
 import os
 
 
-from ._abc_parse import ABCParse
-from ._multi_fate_color_map import mk_multifate_cmap
-from ._larry_in_vitro_cmap import LARRY_in_vitro_cmap
+from .. import utils
+# from ._multi_fate_color_map import mk_multifate_cmap
+# from ._larry_in_vitro_cmap import LARRY_in_vitro_cmap
 
 NoneType = type(None)
 
-class ConfusionMatrix(ABCParse):
+class ConfusionMatrix(utils.ABCParse):
     def __init__(self, ):
 
         self.__parse__(locals())

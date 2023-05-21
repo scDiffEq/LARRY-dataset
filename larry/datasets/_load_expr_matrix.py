@@ -3,10 +3,10 @@ from pathlib import Path
 import scipy
 
 
-from .._utils import AutoParseBase
+from .. import utils
 
 
-class ExpressionMatrix(AutoParseBase):
+class ExpressionMatrix(utils.ABCParse):
     def __init__(self, mtx_path):
 
         self.__parse__(locals())

@@ -7,7 +7,7 @@ import scipy
 
 # -- import local dependencies: --------------------------------------------------
 from ._cell_cycle_genes import cell_cycle_genes
-from ..._utils import sparse_zscore
+from ... import utils
 
 
 def remove_cell_cycle_correlated_genes(adata, min_corr=0.1, key_added = "use_genes"):
@@ -57,7 +57,7 @@ def remove_cell_cycle_correlated_genes(adata, min_corr=0.1, key_added = "use_gen
         seed_ix = seed_ix_list[iSet][
             E[:, seed_ix_list[iSet]].sum(axis=0).A.squeeze() > 0
         ]
-        tmp = sparse_zscore(E[:, seed_ix.flatten()])
+        tmp = utils.sparse_zscore(E[:, seed_ix.flatten()])
         tmp = tmp.sum(1).A.squeeze()
 
         c = np.zeros(len(test_gene_idx))

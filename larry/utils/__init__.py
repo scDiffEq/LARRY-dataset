@@ -9,10 +9,8 @@ from ._sparse_mtx_operations import (
     sparse_zscore,
 )
 
-from ._fetch_data import fetch_data
+from ._fetch_data import fetch_data, fetch
 from ._abc_parse import ABCParse
-
-from ._larry_in_vitro_cmap import LARRY_in_vitro_cmap
 
 from ._multi_fate_color_map import mk_multifate_cmap
 from ._multi_fated_lineage_prediction_results import MultifatedLineagePredictionResults
@@ -20,4 +18,4 @@ from ._multi_fated_lineage_prediction_results import MultifatedLineagePrediction
 from ._lineage_classification import LineageClassification
 
 from ._task_two_eval_callback import TaskTwoEvalCallback
-from ._confusion_matrix import ConfusionMatrix
+from ._extract_func_kwargs import extract_func_kwargs

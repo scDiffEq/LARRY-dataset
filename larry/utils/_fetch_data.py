@@ -5,6 +5,14 @@ import pandas as pd
 import torch
 
 
+# -- import packages: -------------
+from autodevice import AutoDevice
+import torch_adata
+
+def fetch(adata, use_key: str, device=AutoDevice()):
+    return torch_adata.tl.fetch(adata, use_key).to(device)
+
+
 # -- API-facing function: ------------------------------------------------------
 def fetch_data(
     adata: a.AnnData, idx: pd.Index, n_sim: int = 1, use_key: str = "X_pca"

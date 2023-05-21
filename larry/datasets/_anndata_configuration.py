@@ -9,7 +9,7 @@ import scipy.io
 
 
 # -- import local dependencies: ------------------------------------------------
-from .._utils import AutoParseBase
+from .. import utils
 from ._dataset_utils import Messages
 
 # -- supporting functions and classes: -----------------------------------------
@@ -18,7 +18,7 @@ def _read_format_df(path, **kwargs):
     df.index = df.index.astype(str)
     return df
 
-class ExpressionMatrix(AutoParseBase):
+class ExpressionMatrix(utils.ABCParse):
     """Container for parsing the expression matrix."""
 
     def __init__(self, mtx_path: str):
@@ -66,7 +66,7 @@ class ExpressionMatrix(AutoParseBase):
         return scipy.sparse.csr_matrix(scipy.sparse.load_npz(self.npz_path))
 
 
-class AnnDataConfiguration(AutoParseBase):
+class AnnDataConfiguration(utils.ABCParse):
     """Construct AnnData from constituent components."""
 
     def __init__(self, X_path, obs_path, var_path, X_clone_path, silent=False):

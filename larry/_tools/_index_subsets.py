@@ -1,7 +1,8 @@
 
-from .._utils._auto_parse_base_class import AutoParseBase
+from .. import utils
 
-class IndexSubsets(AutoParseBase):
+
+class IndexSubsets(utils.ABCParse):
     """Container for keep track of subset indices."""
 
     def __init__(self, adata, time_key="Time point", lineage_key="clone_idx"):
