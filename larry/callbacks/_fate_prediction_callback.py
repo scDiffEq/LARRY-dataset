@@ -10,7 +10,7 @@ from .. import tasks
 
 
 # -- Callback class: -----------------------------------------------------------
-class FatePredictionCallback(utils.ABCParse):
+class FatePredictionCallback(lightning.Callback, utils.ABCParse):
     def __init__(self, model):
         
         self.__parse__(locals())

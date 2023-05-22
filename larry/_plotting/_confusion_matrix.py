@@ -9,22 +9,18 @@ import os
 
 
 from .. import utils
-# from ._multi_fate_color_map import mk_multifate_cmap
-# from ._larry_in_vitro_cmap import LARRY_in_vitro_cmap
+
+from ._multi_fate_in_vitro_color_map import multi_fate_in_vitro_cmap
 
 NoneType = type(None)
 
+
 class ConfusionMatrix(utils.ABCParse):
-    def __init__(self, ):
+    def __init__(self):
 
         self.__parse__(locals())
-        if not os.path.exists("label_cmap.csv"):
-            self.label_cmap = mk_multifate_cmap()
-        else:
-            label_cmap = pd.read_csv("label_cmap.csv", index_col = 0)
-            _in_vitro_cmap = pd.DataFrame.from_dict(LARRY_in_vitro_cmap, orient = "index").reset_index()
-            _in_vitro_cmap.columns = label_cmap.columns
-            self.label_cmap = pd.concat([label_cmap, _in_vitro_cmap]).drop_duplicates()
+        
+        self.multi_fate_in_vitro_cmap = multi_fate_in_vitro_cmap()
 
     @property
     def labels(self):
@@ -67,8 +63,10 @@ class ConfusionMatrix(utils.ABCParse):
     @property
     def _CMAP(self):
         cmap_labels = []
-        _df = self.label_cmap.copy()
-        return [_df.loc[_df['label'] == label]['color'].values[0] for label in self.labels]
+        _df = self.multi_fate_in_vitro_cmap.copy()
+        return [
+            _df.loc[_df["label"] == label]["color"].values[0] for label in self.labels
+        ]
 
     def __heatmap__(self):
         
@@ -79,10 +77,8 @@ class ConfusionMatrix(utils.ABCParse):
             annot=self._ANNOT,
             xticklabels=self.labels,
             yticklabels=self.labels,
-            # need to fix here.... not sure why this doesn't work....?
-            # needs re-ordering of some sort....
-            row_colors=self._CMAP, # self.label_cmap["color"].to_numpy(),
-            col_colors=self._CMAP, # self.label_cmap["color"].to_numpy(),
+            row_colors=self._CMAP,
+            col_colors=self._CMAP,
             row_cluster=False,
             col_cluster=False,
             fmt="",
@@ -92,6 +88,11 @@ class ConfusionMatrix(utils.ABCParse):
             annot_kws={"size": 6},
         )
         cg.ax_heatmap.tick_params(axis="both", which="both", labelsize=6)
+        cg.ax_heatmap.set_title(
+            self._title,
+            fontsize = self._title_fontsize,
+            y = 1.04,
+        )
 
     def __call__(
         self,
@@ -99,18 +100,39 @@ class ConfusionMatrix(utils.ABCParse):
         F_hat,
         labels=None,
         title=None,
+        title_fontsize = 10,
         ax=None,
         cmap="Blues",
         vmax=None,
         figsize=(4, 4),
         save=False,
+        *args,
+        **kwargs,
     ):
 
         self.__parse__(
             locals(),
-            private=["labels", "ax", "cmap", "figsize", "vmax"],
+            public = ["F_obs", "F_hat"],
         )
         self.__heatmap__()
 
         if save:
             plt.savefig(save)
+            
+
+def confusion_matrix(
+    F_obs,
+    F_hat,
+    labels=None,
+    title=None,
+    ax=None,
+    cmap="Blues",
+    vmax=None,
+    figsize=(4, 4),
+    save=False,
+    *args,
+    **kwargs,
+):
+    confusion_mtx = ConfusionMatrix()
+    KWARGS = utils.extract_func_kwargs(confusion_mtx, locals())
+    return confusion_mtx(**KWARGS)

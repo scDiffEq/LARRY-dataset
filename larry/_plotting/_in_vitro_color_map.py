@@ -31,5 +31,5 @@ class InVitroColorMap:
     def df(self):
         return pd.DataFrame({"Cell type annotation": self._KEYS, "color": self._VALS})
     
-def in_vitro_cmap(self):
+def in_vitro_cmap():
     return InVitroColorMap().df
