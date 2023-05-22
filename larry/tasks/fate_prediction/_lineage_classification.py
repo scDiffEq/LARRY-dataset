@@ -1,9 +1,9 @@
 
-from ._abc_parse import ABCParse
+from ... import utils
 
 import pandas as pd
 
-class LineageClassification(ABCParse):
+class LineageClassification(utils.ABCParse):
     """Sort ground truth lineages based on their types."""
 
     def __init__(self, F_obs: pd.DataFrame):
