@@ -1,7 +1,6 @@
 
 
-from ._abc_parse import ABCParse
-
+from .... import utils
 
 import pandas as pd
 import numpy as np
@@ -10,8 +9,9 @@ import sklearn
 import os
 NoneType = type(None)
 
-class MulticlassPrecisionRecall(ABCParse):
+class MulticlassPrecisionRecall(utils.ABCParse):
     def __init__(self, threshold=0.3, minor_fate_key="minor"):
+        
         self.__parse__(locals(), public=[None])
 
         self._minor_fate_key = minor_fate_key
