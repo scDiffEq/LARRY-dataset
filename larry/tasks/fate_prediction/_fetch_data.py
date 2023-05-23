@@ -6,12 +6,15 @@ import anndata as a
 import autodevice
 import torch
 
-NoneType = type(None)
+
+from ... import utils
+
+
 from typing import Union, Dict, List
+NoneType = type(None)
 
-from ._abc_parse import ABCParse
 
-class DataFormat(ABCParse):
+class DataFormat(utils.ABCParse):
     def __init__(self, data: Union[torch.Tensor, np.ndarray]):
         self.__parse__(locals(), public=["data"])
 
