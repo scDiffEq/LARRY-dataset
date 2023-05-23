@@ -7,19 +7,16 @@ import torch
 from typing import Union
 NoneType = type(None)
 
-def fetch_data(
-    adata: a.AnnData,
-    use_key: str = "X_pca",
-    torch: bool = True,
-    groupby: Union[NoneType, str] = None,
-    device: str = autodevice.AutoDevice(),
-)
+
+from ._fetch_data import fetch_data
+
 
 class FatePredictionData(utils.ABCParse):
     def __init__(
         self,
         adata,
         time_key = "Time point",
+        use_key = = "X_pca",
         N = 2000,
         groupby: Union[NoneType, str] = None,
         device: str = autodevice.AutoDevice(),
@@ -29,8 +26,11 @@ class FatePredictionData(utils.ABCParse):
         self.df = adata.obs.copy()
         
     @property
+    def _t(self):
+        return sorted(self.adata.obs[self._time_key].unique().tolist())
+        
+    @property
     def t(self):
-        self._t = sorted(self.adata.obs[self._time_key].unique().tolist())
         return torch.Tensor(self._t).to(self._device)
         
     @property
@@ -48,6 +48,6 @@ class FatePredictionData(utils.ABCParse):
             use_key=self._use_key,
             torch = True,
             groupby = None,
-            device: str = autodevice.AutoDevice(),
+            device = autodevice.AutoDevice(),
         )[None, :, :].expand(self._N, -1, -1)
         

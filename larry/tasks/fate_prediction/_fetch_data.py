@@ -62,7 +62,7 @@ class DataFormat(utils.ABCParse):
         return torch.Tensor(self.data).to(device)
 
 
-class X_use(ABCParse):
+class X_use(utils.ABCParse):
     _idx = None
     """The matrix you want from AnnData"""
 

@@ -8,7 +8,8 @@ import scdiffeq as sdq
 import os
 NoneType = type(None)
 
-class AccuracyScores:
+class MultiIndexAccuracyScores:
+    """Calculate neg. cross entropy and accuracy score"""
     def __init__(self, F_obs, F_hat):
         
         self.NegativeCrossEntropy = sdq.tl.NegativeCrossEntropy()
