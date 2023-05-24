@@ -9,7 +9,7 @@ import sklearn
 import os
 NoneType = type(None)
 
-class MulticlassPrecisionRecall(utils.ABCParse):
+class MultiClassPrecisionRecall(utils.ABCParse):
     def __init__(self, threshold=0.3, minor_fate_key="minor"):
         
         self.__parse__(locals(), public=[None])

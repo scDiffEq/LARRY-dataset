@@ -1,5 +1,6 @@
 
 from ... import utils
+from . import _fate_prediction_utils as fate_utils
 
 import pandas as pd
 import autodevice
@@ -12,8 +13,6 @@ import time
 from typing import Union
 NoneType = type(None)
 
-
-from ._fetch_data import fetch_data
 
 ### from when the `FatePredictionData` class was in it's own module script: 
 ### MOVE THIS TO _fate_bias_matrix_generation.py ?? and make one class. would make sense.
@@ -59,7 +58,7 @@ class FatePredictionData(utils.ABCParse):
     @property
     def X0(self):
         if not hasattr(self, "_X0"):
-            self._X0 = fetch_data(
+            self._X0 = fate_utils.fetch_data(
                 adata = self.t0_adata,
                 use_key=self._use_key,
                 torch = True,
@@ -163,4 +162,4 @@ class FateBias(utils.ABCParse):
         
 
     def __repr__(self):
-        return f"Fate prediction evaluation | Evaluating: {self._MODEL_TYPE}"
+        return f"Fate prediction evaluation | evaluating: {self._MODEL_TYPE}"

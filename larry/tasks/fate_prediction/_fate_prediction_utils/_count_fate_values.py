@@ -7,7 +7,7 @@ from licorice_font import font_format
 
 
 # -- import local dependencies: -----------------------------------------------------------
-from ._abc_parse import ABCParse
+from .... import utils
 
 
 # -- define types: -----------------------------------------------------------------------
@@ -15,7 +15,7 @@ from typing import Union
 NoneType = type(None)
 
 
-class IndexSubsets(ABCParse):
+class IndexSubsets(utils.ABCParse):
     """Container for keep track of subset indices."""
 
     def __init__(self, adata, time_key="Time point", lineage_key="clone_idx"):
@@ -194,7 +194,7 @@ def annotate_fated(
 
 
 # -- Main operator class: -----------------------------------------------------------------
-class FateValues(ABCParse):
+class FateValues(utils.ABCParse):
     def __init__(
         self,
         adata,

@@ -1,9 +1,12 @@
 
-from ._abc_parse import ABCParse
+from .... import utils
+
+
 import pandas as pd
 import sklearn
 
-class MultifatedLineagePredictionResults(ABCParse):
+class MultifatedLineagePredictionResults(utils.ABCParse):
+    
     def __init__(self, threshold=0.3):
 
         """threshold: accuracy threshold for which we decide it counts as truly labeled"""
@@ -34,7 +37,7 @@ class MultifatedLineagePredictionResults(ABCParse):
         ).fillna(0)
         return target_pred_df[target_pred_df.sum(1) > 0]
 
-    def _compute_error(self, target_pred_df):
+    def _mean_abs_error(self, target_pred_df):
         return sklearn.metrics.mean_absolute_error(
             target_pred_df["predicted"].values, target_pred_df["target"].values
         )
@@ -51,7 +54,7 @@ class MultifatedLineagePredictionResults(ABCParse):
                 if not label in self.labels:
                     self.labels.append(label)
 
-            error = self._compute_error(
+            error = self._mean_abs_error(
                 self._compose_target_pred_df(idx, predicted, target)
             )
 

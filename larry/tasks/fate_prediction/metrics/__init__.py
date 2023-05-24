@@ -1,2 +1,3 @@
 
+from ._multi_fated_lineage_prediction_results import MultifatedLineagePredictionResults
 from ._multiclass_precision_recall import MultiClassPrecisionRecall
