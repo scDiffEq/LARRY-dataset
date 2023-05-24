@@ -9,6 +9,7 @@ import tqdm
 import time
 
 # from ._fate_prediction_data import FatePredictionData
+from ._observed_fate_bias import F_obs
 
 from typing import Union
 NoneType = type(None)
@@ -123,20 +124,42 @@ class FateBias(utils.ABCParse):
         if not hasattr(self, "_dimension_reduce"):
             self._configure_dimension_reduction()
         return self._dimension_reduce
-
+    
+    def _configure_t0_idx(self):
+        
+        if not isinstance(self._t0_idx, NoneType):
+            self._t0_idx_config = self._t0_idx
+        else:
+            try:
+                self.F_obs = F_obs(self.adata)
+                self._t0_idx_config = self.F_obs().index
+            except:
+                self._t0_idx_config = self.data.t0_idx
+        
+    @property
+    def t0_idx(self):
+        if not hasattr(self, "_t0_idx_config"):
+            self._configure_t0_idx()
+        return self._t0_idx_config
+        
     def __call__(
         self,
         adata,
-        t0_idx,
         obs_key: str = "Cell type annotation",
         use_key: str = "X_pca",
         time_key: str = "Time point",
+        t0_idx = None,
         N=2000,
         PCA = None,
     ):
         """This function generates F from simulations of input data and a model"""
 
-        self.__update__(locals(), private=["obs_key", "use_key", "N"])
+        self._t0_idx = t0_idx
+        self.__update__(
+            locals(),
+            private=["obs_key", "use_key", "N"],
+            ignore = ['t0_idx'],
+        )
         self.F_hat = {}
         
         self.data = FatePredictionData(
@@ -146,10 +169,10 @@ class FateBias(utils.ABCParse):
             N = N,
             device = self._device,
         )
-
+        
         for i in tqdm.notebook.tqdm(range(len(self.t0_idx)), desc="EVALUATION"):
 
-            X_hat = self._predict_state(X0=self.data.X0[i].to("cuda:0"), t0_idx=self.t0_idx[i])
+            X_hat = self._predict_state(X0=self.data.X0[i].to(self._device), t0_idx=self.t0_idx[i])
             
             if self._DIMENSION_REDUCE:
                 X_hat = self.PCA.transform(X_hat)

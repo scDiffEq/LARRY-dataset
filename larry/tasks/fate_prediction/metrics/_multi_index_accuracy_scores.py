@@ -25,13 +25,13 @@ class MultiIndexAccuracyScores:
         )
 
     @property
-    def fate_prediction_subsetes(self):
-        return pickle.load(
-            open(
-                "./scdiffeq-analyses/analyses/figure2/task_2.fate_prediction/FatePredictionSubsets.pkl",
-                "rb",
-            )
-        )
+    def fate_prediction_subsets(self):
+        return pickle.load(open(self._path_to_subset_idx, "rb"))
+            
+#                 "./scdiffeq-analyses/analyses/figure2/task_2.fate_prediction/FatePredictionSubsets.pkl",
+#                 "rb",
+#             )
+#         )
 
     def forward(self, key_i, key_j):
 
@@ -58,7 +58,10 @@ class MultiIndexAccuracyScores:
 
          
 
-    def __call__(self, save_path=None):
+    def __call__(self, path_to_subset_idx, save_path=None):
+        
+        self._path_to_subset_idx = path_to_subset_idx
+        
         for key_i in ["unique_train", "unique_test"]:
             for key_j in ["all_fates", "N/M", "N/M-early"]:
                 self.forward(key_i, key_j)

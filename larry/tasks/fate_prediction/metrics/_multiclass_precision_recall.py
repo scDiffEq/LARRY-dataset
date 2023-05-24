@@ -19,7 +19,15 @@ class MultiClassPrecisionRecall(utils.ABCParse):
         self.precision = {}
         self.recall = {}
         self.mean_precision = {}
-        self.AUPR = {}
+        self.AUPR = {}        
+        
+    def _filter_undiff(self):
+        for key in ["undiff", "Undifferentiated"]:
+            if key in self._F_obs.columns.tolist():
+                self._F_obs = self._F_obs.drop(key, axis = 1)
+            if key in self._F_hat.columns.tolist():
+                self._F_hat = self._F_hat.drop(key, axis = 1)
+                    
 
     @property
     def _f_hat_fates(self):
@@ -62,6 +70,8 @@ class MultiClassPrecisionRecall(utils.ABCParse):
 
         self._F_obs = F_obs
         self._F_hat = F_hat
+        
+        self._filter_undiff()
 
         for i, fate in enumerate(self.fates):
             self.forward(i, fate)

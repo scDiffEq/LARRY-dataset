@@ -53,11 +53,22 @@ class ConfusionMatrix(utils.ABCParse):
         _ANNOT = self.conf_mtx.astype(str)
         _ANNOT[np.where(_ANNOT.astype(str) == "0")] = ""
         return _ANNOT
+    
+    def _format_max_val(self):
+        max_val = self.conf_mtx.max()
+        
+        if max_val >= 100:
+            divisor, rounder = 100, -2
+        else:
+            divisor, rounder = 10, -1
+        
+        diff = divisor - (max_val % divisor)
+        return np.round(max_val + diff, rounder)
 
     @property
     def _VMAX(self):
         if isinstance(self._vmax, NoneType):
-            return np.round(self.conf_mtx.max(), -2)
+            return self._format_max_val()
         return self._vmax
     
     @property

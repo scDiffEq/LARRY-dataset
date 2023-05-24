@@ -1,8 +1,9 @@
-sum_norm_df = sdq.tl.sum_norm_df
+
+from ... import utils
+from . import _fate_prediction_utils as fate_utils
 
 
-
-class F_obs(larry.utils.ABCParse):
+class F_obs(utils.ABCParse):
     """Format ground truth comparison data and get labels, etc."""
 
     def __init__(
@@ -19,7 +20,7 @@ class F_obs(larry.utils.ABCParse):
 
         self.__parse__(locals(), public=["adata"])
 
-        larry.tasks.fate_prediction.fate_prediction_utils.count_fate_values(
+        fate_utils.count_fate_values(
             self.adata,
             origin_time=self._origin_time,
             fate_time=self._fate_time,
@@ -33,16 +34,19 @@ class F_obs(larry.utils.ABCParse):
         self._df = self.adata.obs.copy()
 
     @property
-    def _FATE_DF(self):
-        return (
-            self.adata[self._df[self._time_key] == self._origin_time[0]]
-            .obsm["cell_fate_df"]
-            .fillna(0)
-        ).drop(["Undifferentiated", "clone_idx"], axis=1)
-
-    @property
     def df(self):
-        return sum_norm_df(self._FATE_DF[self._FATE_DF.sum(1) > 0])
+        if not hasattr(self, "_fate_df"):
+            _fate_df = (
+                self.adata[self._df[self._time_key] == self._origin_time[0]]
+                .obsm["cell_fate_df"]
+                .fillna(0)
+            )
+            for key in ['undiff', "Undifferentiated", "clone_idx"]:
+                if key in _fate_df.columns:
+                    _fate_df = _fate_df.drop(key, axis=1)
+            
+            self._fate_df = utils.sum_norm_df(_fate_df[_fate_df.sum(1) > 0])
+        return self._fate_df
 
     def __call__(self):
         return self.df

@@ -48,7 +48,12 @@ class ABCParse(ABC):
         return self._stored_private + self._stored_public
 
     def __parse__(
-        self, kwargs: Dict, public: List = [], private: List = [], ignore: List = []
+        self,
+        kwargs: Dict,
+        public: List = [],
+        private: List = [],
+        ignore: List = [],
+        REPORT: bool = False,
     ):
 
         if not self._BUILT:
@@ -60,16 +65,31 @@ class ABCParse(ABC):
             private = list(kwargs.keys())
 
         for key, val in kwargs.items():
+            if REPORT:
+                print(key)
             if not key in self._IGNORE:
                 self.__set__(key, val, public, private)
 
-    def __update__(self, kwargs: dict, public: List = [], private: List = []) -> None:
+    def __update__(
+        self,
+        kwargs: dict,
+        public: List = [],
+        private: List = [],
+        ignore: List = [],
+        REPORT = False,
+    ) -> None:
 
         if not self._BUILT:
             self.__build__()
 
         for key, val in kwargs.items():
-            if not isinstance(val, NoneType) and key in self._STORED:
-                self.__set_existing__(key, val)
-            elif not isinstance(val, NoneType) and not key in self._IGNORE:
-                self.__set__(key, val, public, private)
+            if not key in ignore:
+                if REPORT:
+                    print(key)
+                if not isinstance(val, NoneType) and key in self._STORED:
+                    self.__set_existing__(key, val)
+                elif not isinstance(val, NoneType) and not key in self._IGNORE:
+                    self.__set__(key, val, public, private)
+            else:
+                if REPORT:
+                    print(f"[ ignored ]: {key}")
