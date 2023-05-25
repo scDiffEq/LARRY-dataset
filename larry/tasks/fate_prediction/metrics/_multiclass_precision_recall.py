@@ -108,3 +108,11 @@ class MultiClassPrecisionRecall(utils.ABCParse):
                     "AUPR": self.AUPR,
                 }
             ).to_csv(os.path.join(save_path, "mean_precision_aupr.csv"))
+            
+        return {
+            "recall": self.recall,
+            "precision": self.precision,
+            "mean_precision": self.mean_precision,
+            "AUPR": self.AUPR,
+        }
+    
