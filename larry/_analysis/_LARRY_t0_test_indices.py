@@ -1,5 +1,5 @@
 
-from .._utils import ABCParse
+from ..utils import ABCParse
 
 class LARRY_t0_test_indices(ABCParse):
     def __init__(

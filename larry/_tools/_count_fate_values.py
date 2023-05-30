@@ -5,13 +5,13 @@ from licorice_font import font_format
 
 
 # -- import local dependencies: -----------------------------------------------------------
-from .._utils import AutoParseBase
+from .. import utils
 from ._index_subsets import IndexSubsets
 from ._annotate_fated import annotate_fated
 
 
 # -- Main operator class: -----------------------------------------------------------------
-class FateValues(AutoParseBase):
+class FateValues(utils.ABCParse):
     def __init__(
         self,
         adata,
