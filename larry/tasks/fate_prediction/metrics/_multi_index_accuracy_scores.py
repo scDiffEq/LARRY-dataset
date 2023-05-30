@@ -35,7 +35,7 @@ class MultiIndexAccuracyScores:
 
     def forward(self, key_i, key_j):
 
-        subset_idx = self.fate_prediction_subsetes["Indices"][key_i][key_j]
+        subset_idx = self.fate_prediction_subsets["Indices"][key_i][key_j]
         
         F_obs_subset = self.F_obs.loc[self.F_obs.index.isin(subset_idx)]
         F_hat_subset = self.F_hat.loc[self.F_hat.index.isin(subset_idx)]
@@ -58,7 +58,7 @@ class MultiIndexAccuracyScores:
 
          
 
-    def __call__(self, path_to_subset_idx, save_path=None):
+    def __call__(self, path_to_subset_idx, save_path=None, return_dfs = False):
         
         self._path_to_subset_idx = path_to_subset_idx
         
@@ -74,5 +74,6 @@ class MultiIndexAccuracyScores:
             
             self.acc_df.to_csv(os.path.join(save_path, "accuracy_scores.csv"))
             self.nce_df.to_csv(os.path.join(save_path, "negative_cross_entropy.csv"))
-
-        return self.acc_df, self.nce_df
+        
+        if return_dfs:
+            return self.acc_df, self.nce_df
