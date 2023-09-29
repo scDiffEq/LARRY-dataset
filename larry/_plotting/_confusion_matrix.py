@@ -1,10 +1,8 @@
 
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 import numpy as np
-import sklearn
 import os
 
 
@@ -17,6 +15,9 @@ NoneType = type(None)
 
 class ConfusionMatrix(utils.ABCParse):
     def __init__(self):
+        
+        import seaborn as sns
+        import sklearn
 
         self.__parse__(locals())
         
