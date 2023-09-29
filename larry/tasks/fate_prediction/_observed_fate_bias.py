@@ -1,9 +1,12 @@
 
+import ABCParse
+
+
 from ... import utils
 from . import _fate_prediction_utils as fate_utils
 
 
-class F_obs(utils.ABCParse):
+class F_obs(ABCParse.ABCParse):
     """Format ground truth comparison data and get labels, etc."""
 
     def __init__(
@@ -35,6 +38,7 @@ class F_obs(utils.ABCParse):
 
     @property
     def df(self):
+        """This is the F_obs DataFrame"""
         if not hasattr(self, "_fate_df"):
             _fate_df = (
                 self.adata[self._df[self._time_key] == self._origin_time[0]]
@@ -45,7 +49,7 @@ class F_obs(utils.ABCParse):
                 if key in _fate_df.columns:
                     _fate_df = _fate_df.drop(key, axis=1)
             
-            self._fate_df = utils.sum_norm_df(_fate_df[_fate_df.sum(1) > 0])
+            self._fate_df = utils.row_norm_df(_fate_df[_fate_df.sum(1) > 0])
         return self._fate_df
 
     def __call__(self):

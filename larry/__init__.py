@@ -10,3 +10,4 @@ from . import _tools as tl
 from . import callbacks
 from . import datasets
 from . import utils
+from . import tasks

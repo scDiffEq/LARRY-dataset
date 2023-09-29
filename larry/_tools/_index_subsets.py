@@ -1,8 +1,8 @@
 
-from .. import utils
+import ABCParse
 
 
-class IndexSubsets(utils.ABCParse):
+class IndexSubsets(ABCParse.ABCParse):
     """Container for keep track of subset indices."""
 
     def __init__(self, adata, time_key="Time point", lineage_key="clone_idx"):

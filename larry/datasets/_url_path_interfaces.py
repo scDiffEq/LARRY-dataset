@@ -3,13 +3,14 @@ from pathlib import Path
 from typing import Dict
 import wget
 import licorice_font
+import ABCParse
 
 from .. import utils
 from ._directory_manager import mkdir
 
 
 # -- base classes: -------------------------------------------------------------
-class FormattedURLFile(utils.ABCParse):
+class FormattedURLFile(ABCParse.ABCParse):
     def __init__(self, file, download_dir, download_structure, base_url):
 
         self.__parse__(locals(), public=[None])

@@ -1,11 +1,12 @@
 
 import pandas as pd
+import ABCParse
 
 from ._in_vitro_color_map import InVitroColorMap
 from .. import utils
 
 
-class MultiFateInVitroColorMap(utils.ABCParse):
+class MultiFateInVitroColorMap(ABCParse.ABCParse):
     def __init__(self, save=False, fname="label_cmap.csv"):
 
         self.__parse__(locals(), public=[None])

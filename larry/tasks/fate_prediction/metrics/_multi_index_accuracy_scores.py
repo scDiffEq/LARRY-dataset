@@ -1,18 +1,45 @@
 
-import sklearn
+
 import pickle
 import numpy as np
 import pandas as pd
 import scdiffeq as sdq
-
+import sklearn
 import os
-NoneType = type(None)
+import ABCParse
+
+
+class NegativeCrossEntropy(ABCParse.ABCParse):
+    def __init__(self, epsilon=1e-7):
+
+        self.__parse__(locals(), public=[None])
+
+    def _clip_predictions(self, pred):
+        """Given a defined epsilon parameter, clip predictions"""
+        return np.clip(pred, self._epsilon, 1 - self._epsilon)
+
+    def _log_transformed_predictions(self, obs, pred_clipped):
+        return obs * np.log(pred_clipped)
+
+    def _summing(self, pred_logged):
+        return -np.sum(np.sum(pred_logged, axis=1))
+
+    def __call__(self, obs: pd.DataFrame, pred: pd.DataFrame):
+        pred_clipped = self._clip_predictions(pred)
+        pred_logged = self._log_transformed_predictions(obs, pred_clipped)
+        return self._summing(pred_logged)
+
+    def __repr__(self):
+        return """NegativeCrossEntropy()"""
+    
 
 class MultiIndexAccuracyScores:
     """Calculate neg. cross entropy and accuracy score"""
     def __init__(self, F_obs, F_hat):
         
-        self.NegativeCrossEntropy = sdq.tl.NegativeCrossEntropy()
+        
+        
+        self.NegativeCrossEntropy = NegativeCrossEntropy()
 
         self.AccuracyScores = {}
         self.NegativeCrossEntropyScores = {}
@@ -23,7 +50,7 @@ class MultiIndexAccuracyScores:
         self.AccuracyScores["all_2081"] = sklearn.metrics.accuracy_score(
             y_true=self.F_obs.idxmax(1).values, y_pred=self.F_hat.idxmax(1).values
         )
-
+        
     @property
     def fate_prediction_subsets(self):
         return pickle.load(open(self._path_to_subset_idx, "rb"))
@@ -70,7 +97,7 @@ class MultiIndexAccuracyScores:
         self.acc_df = self._to_frame(score_dict=self.AccuracyScores, key="acc")
         self.nce_df = self._to_frame(score_dict=self.NegativeCrossEntropyScores, key="nce")
         
-        if not isinstance(save_path, NoneType):
+        if not save_path is None:
             
             self.acc_df.to_csv(os.path.join(save_path, "accuracy_scores.csv"))
             self.nce_df.to_csv(os.path.join(save_path, "negative_cross_entropy.csv"))

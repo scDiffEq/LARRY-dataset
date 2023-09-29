@@ -1,13 +1,15 @@
 
-from pathlib import Path
+import pathlib
 import scipy
 
-
+import ABCParse
 from .. import utils
 
+from typing import Union
 
-class ExpressionMatrix(utils.ABCParse):
-    def __init__(self, mtx_path):
+
+class ExpressionMatrix(ABCParse.ABCParse):
+    def __init__(self, mtx_path: Union[str, pathlib.Path]):
 
         self.__parse__(locals())
 
@@ -16,7 +18,7 @@ class ExpressionMatrix(utils.ABCParse):
 
     @property
     def npz_path(self):
-        return Path(str(self.mtx_path).replace("mtx.gz", "npz"))
+        return pathlib.Path(str(self.mtx_path).replace("mtx.gz", "npz"))
 
     @property
     def npz_exists(self):
@@ -27,7 +29,7 @@ class ExpressionMatrix(utils.ABCParse):
             scipy.sparse.save_npz(self.npz_path, self.mtx)
 
 
-def load_expr_matrix(path):
+def load_expr_matrix(path: Union[str, pathlib.Path]):
     
     expr_mat = ExpressionMatrix(mtx_path = path)
 

@@ -4,12 +4,11 @@ from .... import utils
 
 import pandas as pd
 import numpy as np
-import sklearn
-
+import ABCParse
 import os
-NoneType = type(None)
 
-class MultiClassPrecisionRecall(utils.ABCParse):
+
+class MultiClassPrecisionRecall(ABCParse.ABCParse):
     def __init__(self, threshold=0.3, minor_fate_key="minor"):
         
         self.__parse__(locals(), public=[None])
@@ -20,6 +19,8 @@ class MultiClassPrecisionRecall(utils.ABCParse):
         self.recall = {}
         self.mean_precision = {}
         self.AUPR = {}        
+        
+        import sklearn
         
     def _filter_undiff(self):
         for key in ["undiff", "Undifferentiated"]:
@@ -97,7 +98,7 @@ class MultiClassPrecisionRecall(utils.ABCParse):
             self.AUPR[key] = sklearn.metrics.auc(self.recall[key], self.precision[key])
             
             
-        if not isinstance(save_path, NoneType):
+        if not save_path is None:
             
             np.save(os.path.join(save_path, "multiclass_pr.recall"), self.recall)
             np.save(os.path.join(save_path, "multiclass_pr.precision"), self.precision)

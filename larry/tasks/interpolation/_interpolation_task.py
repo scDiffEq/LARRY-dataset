@@ -1,18 +1,16 @@
 
 # -- import local dependencies: -----
 from ._interpolation_data import InterpolationData
-from ... import utils
 
 
 # -- import packages: ----
-from scdiffeq.core.lightning_models.base import SinkhornDivergence
+import ABCParse
 import autodevice
 import torch
 
+from typing import Tuple
 
-NoneType = type(None)
-
-class InterpolationTask(utils.ABCParse):
+class InterpolationTask(ABCParse.ABCParse):
     def __init__(
         self,
         adata,
@@ -31,16 +29,19 @@ class InterpolationTask(utils.ABCParse):
         self.__parse__(locals())
 
         self.data = InterpolationData(**self._DATA_KWARGS)
+        
+        from scdiffeq.core.lightning_models.base import SinkhornDivergence
+        
         self.SinkhornDivergence = SinkhornDivergence(**self._SINKHORN_KWARGS)
 
     @property
     def _DATA_KWARGS(self):
-        return utils.extract_func_kwargs(
+        return ABCParse.function_kwargs(
             func=InterpolationData, kwargs=self._PARAMS
         )
     @property
     def _SINKHORN_KWARGS(self):
-        return utils.extract_func_kwargs(
+        return ABCParse.function_kwargs(
             func=SinkhornDivergence, kwargs=self._PARAMS
         )
 
@@ -62,7 +63,7 @@ class InterpolationTask(utils.ABCParse):
     
     def _parse_forward_out(self, X_hat):
         """to account for KLDiv"""
-        if isinstance(X_hat, tuple):
+        if isinstance(X_hat, Tuple):
             return X_hat[0]
         return X_hat
     
@@ -81,7 +82,7 @@ class InterpolationTask(utils.ABCParse):
         else:
             X_hat = self.forward_without_grad(DiffEq)
             
-        if not isinstance(self.PCA, NoneType):
+        if not self.PCA is None:
             X_hat = self._dimension_reduce_pca(X_hat)
         
         d4_loss = self.SinkhornDivergence(X_hat[1], self.data.X_test_d4).item()

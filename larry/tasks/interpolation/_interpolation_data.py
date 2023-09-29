@@ -4,9 +4,10 @@ from ... import utils
 import autodevice
 
 import torch
+import ABCParse
 
 
-class InterpolationData(utils.ABCParse):
+class InterpolationData(ABCParse.ABCParse):
     def __init__(
         self,
         adata,

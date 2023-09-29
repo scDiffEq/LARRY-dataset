@@ -7,6 +7,8 @@ import autodevice
 import torch
 import tqdm
 import time
+import ABCParse
+import adata_query
 
 # from ._fate_prediction_data import FatePredictionData
 from ._observed_fate_bias import F_obs
@@ -20,7 +22,7 @@ NoneType = type(None)
 ### then you have the task class which encompasses the modules for accuracy quantitation.
 
 
-class FatePredictionData(utils.ABCParse):
+class FatePredictionData(ABCParse.ABCParse):
     def __init__(
         self,
         adata,
@@ -59,18 +61,28 @@ class FatePredictionData(utils.ABCParse):
     @property
     def X0(self):
         if not hasattr(self, "_X0"):
-            self._X0 = fate_utils.fetch_data(
+            
+            self._X0 = adata_query.fetch(
                 adata = self.t0_adata,
-                use_key=self._use_key,
-                torch = True,
+                key = self._use_key,
+                torch = Truem,
                 groupby = None,
                 device = autodevice.AutoDevice(),
             )[:, None, :].expand(-1, self._N, -1)
+            
+#             self._X0 = fate_utils.fetch_data(
+#                 adata = self.t0_adata,
+#                 use_key=self._use_key,
+#                 torch = True,
+#                 groupby = None,
+#                 device = autodevice.AutoDevice(),
+#             )[:, None, :].expand(-1, self._N, -1)
+
         return self._X0
 
 
 # -- main class: ----------------------------------------------------------------------      
-class FateBias(utils.ABCParse):
+class FateBias(ABCParse.ABCParse):
     def __init__(
         self,
         DiffEq,

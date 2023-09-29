@@ -2,7 +2,7 @@
 # -- import packages: ---------------------------------------------------------------------
 import pandas as pd
 from licorice_font import font_format
-
+import ABCParse
 
 # -- import local dependencies: -----------------------------------------------------------
 from .. import utils
@@ -11,7 +11,7 @@ from ._annotate_fated import annotate_fated
 
 
 # -- Main operator class: -----------------------------------------------------------------
-class FateValues(utils.ABCParse):
+class FateValues(ABCParse.ABCParse):
     def __init__(
         self,
         adata,
