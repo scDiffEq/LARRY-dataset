@@ -7,6 +7,7 @@ import numpy as np
 import ABCParse
 import os
 
+import sklearn
 
 class MultiClassPrecisionRecall(ABCParse.ABCParse):
     def __init__(self, threshold=0.3, minor_fate_key="minor"):
@@ -19,9 +20,7 @@ class MultiClassPrecisionRecall(ABCParse.ABCParse):
         self.recall = {}
         self.mean_precision = {}
         self.AUPR = {}        
-        
-        import sklearn
-        
+                
     def _filter_undiff(self):
         for key in ["undiff", "Undifferentiated"]:
             if key in self._F_obs.columns.tolist():
