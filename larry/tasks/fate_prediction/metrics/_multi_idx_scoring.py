@@ -118,7 +118,7 @@ class MultiIndexAccuracy(MultiIndexScoring):
         F_obs, F_hat = self._subset(F_obs=F_obs, F_hat=F_hat, subset_idx=subset_idx)
 
         return sklearn.metrics.accuracy_score(
-            F_obs.idxmax(1).values, F_hat.idxmax(1).values
+            F_obs.idxmax(1).tolist(), F_hat.idxmax(1).tolist()
         )
 
     def __repr__(self) -> str:

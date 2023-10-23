@@ -65,7 +65,7 @@ class FatePredictionData(ABCParse.ABCParse):
             self._X0 = adata_query.fetch(
                 adata = self.t0_adata,
                 key = self._use_key,
-                torch = Truem,
+                torch = True,
                 groupby = None,
                 device = autodevice.AutoDevice(),
             )[:, None, :].expand(-1, self._N, -1)
@@ -83,22 +83,20 @@ class FatePredictionData(ABCParse.ABCParse):
 
 # -- main class: ----------------------------------------------------------------------      
 class FateBias(ABCParse.ABCParse):
-    def __init__(
-        self,
-        DiffEq,
-        Graph,
-        PCA = None,
-        device=autodevice.AutoDevice(),
-    ):
-        """
-        DiffEq and Graph are required.
-        """
-
-        self.__parse__(locals(), public=["DiffEq", "Graph", "PCA"])
+    def __init__(self, device=autodevice.AutoDevice()):
+        
+        self.__parse__(locals())
         
     @property
+    def kNN(self):
+        if not hasattr(self, "_kNN"):
+            import scdiffeq as sdq
+            self._kNN = sdq.tl.kNN(self._adata)
+        return self._kNN
+    
+    @property
     def _MODEL_TYPE(self):
-        return str(self.DiffEq)
+        return str(self._DiffEq)
     
     def _fate_bias_matrix(self):
         value_counts = {
@@ -108,7 +106,7 @@ class FateBias(ABCParse.ABCParse):
 
     def _predict_state(self, X0, t0_idx):
         """returns only the FINAL state"""
-        return self.DiffEq(X0, t=self.data.t)[-1].detach().cpu().numpy()
+        return self._DiffEq(X0, t=self.data.t)[-1].detach().cpu().numpy()
     
     def umap_transform(self, umap_model, t0_idx=[], random=0):
 
@@ -126,7 +124,7 @@ class FateBias(ABCParse.ABCParse):
             )
     @property
     def _kNN_BASIS(self):
-        return self.Graph.X_use.shape[1]
+        return self.kNN.X_use.shape[1]
             
     def _configure_dimension_reduction(self)->bool:
         self._dimension_reduce = self.data.X0.shape[-1] > self._kNN_BASIS
@@ -139,7 +137,7 @@ class FateBias(ABCParse.ABCParse):
     
     def _configure_t0_idx(self):
         
-        if not isinstance(self._t0_idx, NoneType):
+        if hasattr(self, "_t0_idx"):
             self._t0_idx_config = self._t0_idx
         else:
             try:
@@ -157,40 +155,43 @@ class FateBias(ABCParse.ABCParse):
     def __call__(
         self,
         adata,
+        DiffEq,
         obs_key: str = "Cell type annotation",
         use_key: str = "X_pca",
         time_key: str = "Time point",
         t0_idx = None,
         N=2000,
+        kNN = None,
         PCA = None,
     ):
-        """This function generates F from simulations of input data and a model"""
+        """
+        
+        Generates F from simulations of input data and a model
+        
+        DiffEq and Graph are required.
+        """
 
-        self._t0_idx = t0_idx
-        self.__update__(
-            locals(),
-            private=["obs_key", "use_key", "N"],
-            ignore = ['t0_idx'],
-        )
+        self.__update__(locals())
+        
         self.F_hat = {}
         
         self.data = FatePredictionData(
-            adata,
-            time_key = time_key,
-            use_key = use_key,
-            N = N,
+            self._adata,
+            time_key = self._time_key,
+            use_key = self._use_key,
+            N = self._N,
             device = self._device,
         )
         
-        for i in tqdm.notebook.tqdm(range(len(self.t0_idx)), desc="EVALUATION"):
+        for i in tqdm.tqdm(range(len(self.t0_idx)), desc="EVALUATION"):
 
             X_hat = self._predict_state(X0=self.data.X0[i].to(self._device), t0_idx=self.t0_idx[i])
             
             if self._DIMENSION_REDUCE:
                 X_hat = self.PCA.transform(X_hat)
                 
-            self.F_hat[self.t0_idx[i]] = self.Graph.aggregate(
-                X_hat, obs_key=obs_key, max_only=True
+            self.F_hat[self.t0_idx[i]] = self.kNN.aggregate(
+                X_hat, obs_key=self._obs_key, max_only=True
             )
             
         return self._fate_bias_matrix()
@@ -198,3 +199,4 @@ class FateBias(ABCParse.ABCParse):
 
     def __repr__(self):
         return f"Fate prediction evaluation | evaluating: {self._MODEL_TYPE}"
+
