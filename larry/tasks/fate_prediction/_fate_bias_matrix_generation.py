@@ -141,9 +141,11 @@ class FateBias(ABCParse.ABCParse):
             self._t0_idx_config = self._t0_idx
         else:
             try:
+                self.F_obs = F_obs
+            except:
                 self.F_obs = F_obs(self.adata)
                 self._t0_idx_config = self.F_obs().index
-            except:
+            finally:
                 self._t0_idx_config = self.data.t0_idx
         
     @property

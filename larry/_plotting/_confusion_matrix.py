@@ -33,7 +33,7 @@ class ConfusionMatrix(ABCParse.ABCParse):
     @property
     def y_true(self) -> np.ndarray:
         if isinstance(self.F_obs, pd.DataFrame):
-            self.F_obs = self.F_obs.idxmax(1).values
+            return self.F_obs.idxmax(1).values
         return self.F_obs
 
     @property
@@ -44,6 +44,7 @@ class ConfusionMatrix(ABCParse.ABCParse):
 
     @property
     def conf_mtx(self):
+        import sklearn
         return sklearn.metrics.confusion_matrix(
             y_true=self.y_true,
             y_pred=self.y_pred,
@@ -82,6 +83,8 @@ class ConfusionMatrix(ABCParse.ABCParse):
         ]
 
     def __heatmap__(self):
+        
+        import seaborn as sns
         
         cg = sns.clustermap(
             self.conf_mtx,
@@ -123,10 +126,8 @@ class ConfusionMatrix(ABCParse.ABCParse):
         **kwargs,
     ):
 
-        self.__parse__(
-            locals(),
-            public = ["F_obs", "F_hat"],
-        )
+        self.__parse__(locals(), public = ["F_obs", "F_hat"])
+        
         self.__heatmap__()
 
         if save:

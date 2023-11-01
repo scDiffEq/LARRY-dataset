@@ -2,3 +2,4 @@ include larry/_data/*.csv
 include larry/_data/*.pkl
 include larry/_data/*.npy
 include larry/tasks/fate_prediction/FatePredictionSubsets.pkl
+include larry/tasks/fate_prediction/F_obs.csv

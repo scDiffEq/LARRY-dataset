@@ -2,6 +2,7 @@ import ABCParse
 import autodevice
 import lightning
 import pathlib
+import pandas as pd
 
 from .. import tasks
 
@@ -11,10 +12,8 @@ class SimpleFatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
 
     @property
     def F_obs(self):
-        if not hasattr(self, "_F_obs"):
-            self._F_obs = tasks.fate_prediction.F_obs(self._adata).df
-        return self._F_obs
-    
+        return tasks.fate_prediction.F_obs
+
     @property
     def t0_idx(self):
         return self.F_obs.index
@@ -62,6 +61,7 @@ class SimpleFatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         neu_mon_corr_df = tasks.fate_prediction.metrics.neutrophil_monocyte_correlation(F_obs, F_hat)
         neu_mon_corr_csv_path = BASE_PATH.joinpath("neu_mon_corr.csv")
         print(f"Saving `neu_mon_corr_df` to: {neu_mon_corr_csv_path}")
+        pd.DataFrame(neu_mon_corr_df).to_csv(neu_mon_corr_csv_path)
         
 
     def on_train_end(self, trainer, pl_module):
