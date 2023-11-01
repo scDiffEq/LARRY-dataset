@@ -35,11 +35,11 @@ class F_obs(ABCParse.ABCParse):
         )
 
         self._df = self.adata.obs.copy()
-
+        
     @property
-    def df(self):
+    def _df_COUNTS(self):
         """This is the F_obs DataFrame"""
-        if not hasattr(self, "_fate_df"):
+        if not hasattr(self, "_fate_df_COUNTS"):
             _fate_df = (
                 self.adata[self._df[self._time_key] == self._origin_time[0]]
                 .obsm["cell_fate_df"]
@@ -48,9 +48,18 @@ class F_obs(ABCParse.ABCParse):
             for key in ['undiff', "Undifferentiated", "clone_idx"]:
                 if key in _fate_df.columns:
                     _fate_df = _fate_df.drop(key, axis=1)
+
+            self._fate_df_COUNTS = _fate_df[_fate_df.sum(1) > 0]
             
-            self._fate_df = utils.row_norm_df(_fate_df[_fate_df.sum(1) > 0])
+        return self._fate_df_COUNTS
+
+    @property
+    def df(self):
+        if not hasattr(self, "_fate_df"):
+            self._fate_df = utils.sum_norm_df(self._df_COUNTS)
         return self._fate_df
 
-    def __call__(self):
+    def __call__(self, return_counts = False):
+        if return_counts:
+            return self._df_COUNTS
         return self.df
