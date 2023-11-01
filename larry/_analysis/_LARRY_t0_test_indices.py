@@ -1,7 +1,7 @@
 
-from ..utils import ABCParse
+import ABCParse
 
-class LARRY_t0_test_indices(ABCParse):
+class LARRY_t0_test_indices(ABCParse.ABCParse):
     def __init__(
         self,
         adata,

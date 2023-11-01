@@ -1,35 +1,37 @@
 
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 import numpy as np
-import sklearn
 import os
-
-
-from .. import utils
+import ABCParse
 
 from ._multi_fate_in_vitro_color_map import multi_fate_in_vitro_cmap
 
-NoneType = type(None)
+from typing import List, Optional, Tuple
 
-
-class ConfusionMatrix(utils.ABCParse):
-    def __init__(self):
+class ConfusionMatrix(ABCParse.ABCParse):
+    def __init__(self, *args, **kwargs) -> None:
 
         self.__parse__(locals())
         
+        import seaborn as sns
+        import sklearn
+        
         self.multi_fate_in_vitro_cmap = multi_fate_in_vitro_cmap()
-
+        
+    def _configure_labels(self):
+        """If no labels are passed, confiugure labels on the fly from self.F_obs"""
+        return self.F_obs.sum(0).sort_values(ascending=False).index.tolist()
+        
     @property
-    def labels(self):
-        if isinstance(self._labels, NoneType):
-            return self.F_obs.sum(0).sort_values(ascending=False).index.tolist()
+    def labels(self) -> List[str]:
+        if self._labels is None:
+            self._labels = self._configure_labels()
         return self._labels
 
     @property
-    def y_true(self):
+    def y_true(self) -> np.ndarray:
         if isinstance(self.F_obs, pd.DataFrame):
             return self.F_obs.idxmax(1).values
         return self.F_obs
@@ -42,6 +44,7 @@ class ConfusionMatrix(utils.ABCParse):
 
     @property
     def conf_mtx(self):
+        import sklearn
         return sklearn.metrics.confusion_matrix(
             y_true=self.y_true,
             y_pred=self.y_pred,
@@ -67,7 +70,7 @@ class ConfusionMatrix(utils.ABCParse):
 
     @property
     def _VMAX(self):
-        if isinstance(self._vmax, NoneType):
+        if self._vmax is None:
             return self._format_max_val()
         return self._vmax
     
@@ -80,6 +83,8 @@ class ConfusionMatrix(utils.ABCParse):
         ]
 
     def __heatmap__(self):
+        
+        import seaborn as sns
         
         cg = sns.clustermap(
             self.conf_mtx,
@@ -121,10 +126,8 @@ class ConfusionMatrix(utils.ABCParse):
         **kwargs,
     ):
 
-        self.__parse__(
-            locals(),
-            public = ["F_obs", "F_hat"],
-        )
+        self.__parse__(locals(), public = ["F_obs", "F_hat"])
+        
         self.__heatmap__()
 
         if save:
@@ -132,18 +135,28 @@ class ConfusionMatrix(utils.ABCParse):
             
 
 def confusion_matrix(
-    F_obs,
-    F_hat,
-    labels=None,
-    title=None,
-    ax=None,
+    F_obs: pd.DataFrame,
+    F_hat: pd.DataFrame,
+    labels: Optional[List[str]] = None,
+    title: Optional[str] = None,
+    ax: Optional[plt.Axes] = None,
     cmap="Blues",
     vmax=None,
-    figsize=(4, 4),
+    figsize: Tuple[float, float] = (4, 4),
     save=False,
     *args,
     **kwargs,
 ):
+    """
+    Compute and plot confusion matrix between observed (`F_obs`) and predicted (`F_hat`).
+    
+    Parameters:
+    -----------
+    Returns:
+    --------
+    
+    """
+    
     confusion_mtx = ConfusionMatrix()
-    KWARGS = utils.extract_func_kwargs(confusion_mtx, locals())
+    KWARGS = ABCParse.function_kwargs(func = confusion_mtx, kwargs = locals())
     return confusion_mtx(**KWARGS)

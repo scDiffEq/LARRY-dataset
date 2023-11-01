@@ -2,13 +2,13 @@
 # -- import packages: -----
 import autodevice
 import lightning
-
+import ABCParse
 
 from .. import utils
 from .. import tasks
 
 
-class InterpolationCallback(lightning.Callback, utils.ABCParse):
+class InterpolationCallback(lightning.Callback, ABCParse.ABCParse):
     def __init__(
         self,
         model,
@@ -33,7 +33,7 @@ class InterpolationCallback(lightning.Callback, utils.ABCParse):
 
     @property
     def _TASK_KWARGS(self):
-        return utils.extract_func_kwargs(
+        return ABCParse.function_kwargs(
             func=tasks.interpolation.InterpolationTask,
             kwargs=self._PARAMS,
         )

@@ -2,7 +2,7 @@
 # -- import packages: ----------------------------------------------------------
 import autodevice
 import lightning
-
+import ABCParse
 
 # -- import local dependencies: ------------------------------------------------
 from .. import utils
@@ -10,7 +10,7 @@ from .. import tasks
 
 
 # -- Callback class: -----------------------------------------------------------
-class FatePredictionCallback(lightning.Callback, utils.ABCParse):
+class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
     def __init__(self, model):
         
         self.__parse__(locals())

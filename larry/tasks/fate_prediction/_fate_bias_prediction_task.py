@@ -1,33 +1,45 @@
 
-# -- import local dependencies: -----
-from ... import utils
 
-
-# -- import packages: ----
+# -- import packages: ---------------------------------------------------------
 import autodevice
 import torch
+import ABCParse
+import pandas as pd
+import anndata
 
 
-NoneType = type(None)
+# -- import local dependencies: -----------------------------------------------
+from ... import utils
+from ._fate_bias_matrix_generation import FateBias
+from ._observed_fate_bias import F_obs
+from .metrics import MultiClassPrecisionRecall
 
-class FateBiasPredictionTask(utils.ABCParse):
+# -- Operational class: -------------------------------------------------------
+class FateBiasPredictionTask(ABCParse.ABCParse):
     _F_HAT_CONFIGURED = False
     _F_OBS_CONFIGURED = False
     def __init__(
         self,
-        F_hat = None,
-        F_obs = None,
-        adata = None,
+        F_hat: pd.DataFrame = None,
+        F_obs: pd.DataFrame = None,
+        adata: anndata.AnnData = None,
         DiffEq = None,
         kNN_Graph = None,
     ):
+        """
+        F_hat: pd.DataFrame = None,
+        F_obs: pd.DataFrame = None,
+        adata: anndata.AnnData = None,
+        DiffEq = None,
+        kNN_Graph = None,
+        """
         self.__parse__(locals(), public = [None])
         
         
     def _configure_F_hat(self, ):
         
-        if isinstance(self._F_hat, NoneType):
-            self._F_hat = larry.tasks.fate_prediction.FateBias(
+        if self._F_hat is None:
+            self._F_hat = FateBias(
                 self._DiffEq,
                 self._kNN_Graph,
             )(self._adata)
@@ -40,8 +52,8 @@ class FateBiasPredictionTask(utils.ABCParse):
         return self._F_hat
     
     def _configure_F_obs(self, ):
-        if isinstance(self._F_obs, NoneType):
-            self._F_obs = larry.tasks.fate_prediction.F_obs(self._adata).df
+        if self._F_obs is None:
+            self._F_obs = F_obs(self._adata).df
         self._F_OBS_CONFIGURED = True
         
     @property
@@ -53,7 +65,7 @@ class FateBiasPredictionTask(utils.ABCParse):
     
     @property
     def METRIC_precision_recall(self):
-        multiclass_pr = larry.tasks.fate_prediction.metrics.MultiClassPrecisionRecall()
+        multiclass_pr = MultiClassPrecisionRecall()
         return = multiclass_pr(self.F_obs, self.F_hat)
     
     

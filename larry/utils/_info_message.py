@@ -3,10 +3,6 @@
 import licorice_font
 
 
-# -- set typing: ---------------------------------------------------------------
-NoneType = type(None)
-
-
 class InfoMessage:
     def __init__(
         self,
@@ -42,7 +38,7 @@ class InfoMessage:
     def _format_msg_title(self, INFO) -> str:
         return f" - [{INFO}] | "
 
-    def __call__(self, msg: str) -> NoneType:
+    def __call__(self, msg: str) -> None:
 
         """
         Prints message according to above-specified formatting.
