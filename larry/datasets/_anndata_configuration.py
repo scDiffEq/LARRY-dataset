@@ -4,9 +4,9 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import anndata
+import ABCParse
 import scipy
 import scipy.io
-
 
 # -- import local dependencies: ------------------------------------------------
 from .. import utils
@@ -18,12 +18,13 @@ def _read_format_df(path, **kwargs):
     df.index = df.index.astype(str)
     return df
 
-class ExpressionMatrix(utils.ABCParse):
+class ExpressionMatrix(ABCParse.ABCParse):
     """Container for parsing the expression matrix."""
 
     def __init__(self, mtx_path: str):
 
         self.__parse__(locals())
+        
 
     def read_mtx(self)->None:
         self.mtx = scipy.io.mmread(self.mtx_path)
@@ -66,7 +67,7 @@ class ExpressionMatrix(utils.ABCParse):
         return scipy.sparse.csr_matrix(scipy.sparse.load_npz(self.npz_path))
 
 
-class AnnDataConfiguration(utils.ABCParse):
+class AnnDataConfiguration(ABCParse.ABCParse):
     """Construct AnnData from constituent components."""
 
     def __init__(self, X_path, obs_path, var_path, X_clone_path, silent=False):

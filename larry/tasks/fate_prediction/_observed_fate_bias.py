@@ -1,9 +1,12 @@
 
+import ABCParse
+
+
 from ... import utils
 from . import _fate_prediction_utils as fate_utils
 
 
-class F_obs(utils.ABCParse):
+class F_obs(ABCParse.ABCParse):
     """Format ground truth comparison data and get labels, etc."""
 
     def __init__(
@@ -35,7 +38,7 @@ class F_obs(utils.ABCParse):
         
     @property
     def _df_COUNTS(self):
-        
+        """This is the F_obs DataFrame"""
         if not hasattr(self, "_fate_df_COUNTS"):
             _fate_df = (
                 self.adata[self._df[self._time_key] == self._origin_time[0]]

@@ -4,7 +4,7 @@ import anndata
 import numpy as np
 import pandas as pd
 from licorice_font import font_format
-
+import ABCParse
 
 # -- import local dependencies: -----------------------------------------------------------
 from .... import utils
@@ -12,10 +12,9 @@ from .... import utils
 
 # -- define types: -----------------------------------------------------------------------
 from typing import Union
-NoneType = type(None)
 
 
-class IndexSubsets(utils.ABCParse):
+class IndexSubsets(ABCParse.ABCParse):
     """Container for keep track of subset indices."""
 
     def __init__(self, adata, time_key="Time point", lineage_key="clone_idx"):
@@ -91,7 +90,7 @@ def time_occupance(
         type: pandas.DataFrame
     """
     
-    if not isinstance(exclude_fate, NoneType):
+    if not exclude_fate is None:
         
         adata_ = filter_fate(
             adata,
@@ -194,7 +193,7 @@ def annotate_fated(
 
 
 # -- Main operator class: -----------------------------------------------------------------
-class FateValues(utils.ABCParse):
+class FateValues(ABCParse.ABCParse):
     def __init__(
         self,
         adata,

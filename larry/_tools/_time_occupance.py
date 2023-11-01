@@ -8,7 +8,6 @@ from licorice_font import font_format
 
 # -- define types: -----------------------------------------------------------------------
 from typing import Union
-NoneType = type(None)
 
 
 # -- supporting function(s): -------------------------------------------------------------
@@ -57,7 +56,7 @@ def time_occupance(
         type: pandas.DataFrame
     """
     
-    if not isinstance(exclude_fate, NoneType):
+    if not exclude_fate is None:
         
         adata_ = filter_fate(
             adata,

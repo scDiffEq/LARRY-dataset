@@ -1,14 +1,13 @@
 
-import sklearn
-import umap
+import ABCParse
 
-
-from .. import utils
-
-class DimensionReduction(utils.ABCParse):
+class DimensionReduction(ABCParse.ABCParse):
     def __init__(self, n_pcs=50, n_components=2, metric="euclidean", n_neighbors=30):
 
         self.__configure__(locals())
+        
+        import sklearn
+        import umap
 
     def __configure__(self, kwargs, ignore=["self"]):
 

@@ -11,7 +11,7 @@ import torch
 import os
 
 
-from ._abc_parse import ABCParse
+import ABCParse
 from ._count_fate_values import count_fate_values
 
 
@@ -25,7 +25,7 @@ from .. import _plotting as pl
 
 
 
-class TaskTwoEvalCallback(lightning.Callback, ABCParse):
+class TaskTwoEvalCallback(lightning.Callback, ABCParse.ABCParse):
     def __init__(
         self,
         model,

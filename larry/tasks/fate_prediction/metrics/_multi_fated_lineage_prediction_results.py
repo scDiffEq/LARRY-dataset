@@ -3,15 +3,18 @@ from .... import utils
 
 
 import pandas as pd
-import sklearn
+import ABCParse
 
-class MultifatedLineagePredictionResults(utils.ABCParse):
+
+class MultifatedLineagePredictionResults(ABCParse.ABCParse):
     
     def __init__(self, threshold=0.3):
 
         """threshold: accuracy threshold for which we decide it counts as truly labeled"""
 
         self.__parse__(locals(), private=["threshold"])
+        
+        import sklearn
 
         self.results = {}
         self.labels = []
