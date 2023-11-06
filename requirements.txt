@@ -1,0 +1,8 @@
+anndata
+ABCParse
+scipy
+scikit-learn
+pandas
+seaborn
+licorice_font
+wget

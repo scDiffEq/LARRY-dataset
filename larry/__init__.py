@@ -1,7 +1,6 @@
 # lt funcs init
 
-__version__ = __Version__ = "0.0.2rc0"
-
+__version__ = __Version__ = "0.0.2rc1"
 
 
 from . import _analysis as an
