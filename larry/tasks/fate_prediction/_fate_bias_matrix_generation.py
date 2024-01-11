@@ -5,7 +5,6 @@ from . import _fate_prediction_utils as fate_utils
 import pandas as pd
 import autodevice
 import torch
-import tqdm
 import time
 import ABCParse
 import adata_query
@@ -13,14 +12,28 @@ import adata_query
 # from ._fate_prediction_data import FatePredictionData
 from ._observed_fate_bias import F_obs
 
-from typing import Union
-NoneType = type(None)
+from typing import List, Optional, Union
 
 
 ### from when the `FatePredictionData` class was in it's own module script: 
 ### MOVE THIS TO _fate_bias_matrix_generation.py ?? and make one class. would make sense.
 ### then you have the task class which encompasses the modules for accuracy quantitation.
-
+def is_notebook() -> bool:
+    """
+    https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook#:~:text=def%20is_notebook()%20%2D%3E,standard%20Python%20interpreter
+    """
+    
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':
+            return True   # Jupyter notebook or qtconsole
+        elif shell == 'TerminalInteractiveShell':
+            return False  # Terminal running IPython
+        else:
+            return False  # Other type (?)
+    except NameError:
+        return False      # Probably standard Python interpreter
+    
 
 class FatePredictionData(ABCParse.ABCParse):
     def __init__(
@@ -29,7 +42,8 @@ class FatePredictionData(ABCParse.ABCParse):
         time_key = "Time point",
         use_key = "X_pca",
         N = 2000,
-        groupby: Union[NoneType, str] = None,
+        t0_idx: Optional[Union[List, pd.Index]] = None,
+        groupby: Optional[Union[None, str]] = None,
         device: str = autodevice.AutoDevice(),
     ):
         
@@ -102,7 +116,8 @@ class FateBias(ABCParse.ABCParse):
         value_counts = {
             key: val[self._obs_key].value_counts() for key, val in self.F_hat.items()
         }
-        return pd.DataFrame(value_counts).T.fillna(0) / self._N
+        # don't divide by N: integer counts are sometimes useful
+        return pd.DataFrame(value_counts).T.fillna(0) #  / self._N
 
     def _predict_state(self, X0, t0_idx):
         """returns only the FINAL state"""
@@ -165,6 +180,7 @@ class FateBias(ABCParse.ABCParse):
         N=2000,
         kNN = None,
         PCA = None,
+        notebook: bool = is_notebook(),
     ):
         """
         
@@ -179,13 +195,22 @@ class FateBias(ABCParse.ABCParse):
         
         self.data = FatePredictionData(
             self._adata,
+            t0_idx = self._t0_idx,
             time_key = self._time_key,
             use_key = self._use_key,
             N = self._N,
             device = self._device,
         )
         
-        for i in tqdm.tqdm(range(len(self.t0_idx)), desc="EVALUATION"):
+        if notebook:
+            import tqdm.notebook
+            TQDM = tqdm.notebook.tqdm
+        else:
+            import tqdm
+            TQDM = tqdm.tqdm
+            
+        
+        for i in TQDM(range(len(self.t0_idx)), desc="EVALUATION"):
 
             X_hat = self._predict_state(X0=self.data.X0[i].to(self._device), t0_idx=self.t0_idx[i])
             

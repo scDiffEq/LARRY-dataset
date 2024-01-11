@@ -24,7 +24,10 @@ class InVitroFatePredictionSubsets(ABCParse.ABCParse):
             self._f = self._load()
 
     def _load(self) -> Dict:
-        return pickle.load(self._path.open("rb"))
+        try:
+            return pickle.load(self._path.open("rb"))
+        except:
+            return pd.read_pickle(self._path)
 
     @property
     def indices(self) -> Dict:
