@@ -1,4 +1,4 @@
-# <img alt="LARRY-dataset-logo" src="/docs/imgs/LARRY_logo.svg" width="300">
+# <img alt="LARRY-dataset-logo" src="/docs/source/_static/LARRY_logo.svg" width="300">
 
 This is a Python package that downloads and preprocesses the LARRY dataset from the AllonKleinLab GitHub repository. The LARRY dataset is a group of single-cell lineage-traced datasets that have been used to study transcriptional landscapes and cell fate during differentiation [[1](#References)]. There are three datasets within this group of datasets, all using hematopoietic progenitor cells from mouse bone marrow and the LARRY lentiviral barcoding strategy.
 

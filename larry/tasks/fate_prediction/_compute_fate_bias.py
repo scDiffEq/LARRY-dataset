@@ -1,4 +1,5 @@
 
+import ABCParse
 import autodevice
 import torch
 import sklearn.decomposition
@@ -7,6 +8,8 @@ import anndata
 import lightning
 
 from typing import Optional
+
+from ._fate_bias_matrix_generation import FateBias
 
 
 def compute_fate_bias(
@@ -53,7 +56,7 @@ def compute_fate_bias(
     Notes:
         1. Default argument values are catered towards the LARRY dataset.
     """
-
-    fate_bias = larry.tasks.fate_prediction.FateBias(device=device)
+    
+    fate_bias = FateBias(device=device)
     function_kwargs = ABCParse.function_kwargs(func=fate_bias.__call__, kwargs=locals())
     return fate_bias(**function_kwargs)
