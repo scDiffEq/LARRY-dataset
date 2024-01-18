@@ -10,3 +10,7 @@ from . import callbacks
 from . import datasets
 from . import utils
 from . import tasks
+
+from . import _preprocessing as pp
+
+from ._data_structures._lineage import Lineage

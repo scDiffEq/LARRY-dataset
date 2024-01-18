@@ -1,18 +1,22 @@
 
 __module_name__ = "_calculate_dominate_fate.py"
 __author__ = ", ".join(["Michael E. Vinyard"])
-__email__ = ", ".join(["vinyard@g.harvard.edu",])
+__email__ = ", ".join(["mvinyard.ai@gmail.com",])
 
 
-# import packages: ------------------------------------------------------------
+# -- import packages: ---------------------------------------------------------
 from tqdm.notebook import tqdm
 import pandas as pd
 import numpy as np
 import anndata
 
 
-# import local dependencies: --------------------------------------------------
+# -- import local dependencies: -----------------------------------------------
 from ._get_lineage_obs import get_lineage_obs
+
+
+# -- set typing local dependencies: -------------------------------------------
+from typing import List
 
 
 # supporting functions: -------------------------------------------------------
@@ -24,27 +28,21 @@ def _compose_major_fate_df(d2_clone_indices, idx_max_list):
 
 # -----------------------------------------------------------------------------
 def calculate_dominate_fate(
-    adata: anndata.AnnData, t_query: list = [4, 6], return_df: bool = False,
+    adata: anndata.AnnData, t_query: List[float] = [4, 6], return_df: bool = False,
 ) -> pd.DataFrame:
 
-    """
-    Parameters:
-    -----------
-    adata
-        type: anndata.AnnData
+    """Given time points, compute the most common fate at those time points.
 
-    t_query
-        type: list
-        default: [4, 6]
+    Args:
+        adata (``anndata.AnnData``): The [annotated] single-cell data
+        matrix of shape (n_obs, n_vars). Rows correspond to cells and
+        columns to genes. [1].
+
+        t_query (List[float]): time points in the dataset at which to
+        query fate. **Default** = [4, 6]
 
     Returns:
-    --------
-    major_fate_df
-        type: pandas.DataFrame
-
-    Notes:
-    ------
-
+        major_fate_df (pandas.DataFrame)
     """
 
     d2_clone_indices = np.where(adata.uns["is_d2_clone"])[0]

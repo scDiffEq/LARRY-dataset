@@ -19,7 +19,7 @@ from ._url_path_interfaces import (
 from ._load_expr_matrix import load_expr_matrix
 
 from ._data import (
-    inVitroData,
+    in_vitro,
     inVivoData,
     CytokinePerturbationData,
 )

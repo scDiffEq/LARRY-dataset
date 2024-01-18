@@ -30,8 +30,10 @@
    
    quickstart
    install
+   datasets
    api
    notebooks
+
 
 .. grid:: 4
    :gutter: 1
@@ -68,6 +70,21 @@
       :octicon:`desktop-download;3em;sd-text-dark`
 
    .. grid-item-card::
+      :link: datasets.rst
+      :text-align: right
+      :img-background: _static/scdiffeq-sd-card-light.png
+      :class-card: only-light
+       
+      Datasets
+      ^^^
+       
+      .. raw:: html
+
+         <embed><div><br><br></div></embed>
+
+      :octicon:`desktop-download;3em;sd-text-dark`
+
+   .. grid-item-card::
       :link: api.rst
       :text-align: right
       :img-background: _static/scdiffeq-sd-card-light.png
@@ -81,6 +98,10 @@
          <embed><div><br><br></div></embed>
 
       :octicon:`code;3em;sd-text-dark`
+
+.. grid:: 4
+   :gutter: 1
+   :class-container: only-light
 
    .. grid-item-card::
       :link: notebooks.rst
@@ -96,10 +117,6 @@
          <embed><div><br><br></div></embed>
 
       :octicon:`sidebar-expand;3em;sd-text-dark`
-
-.. grid:: 4
-   :gutter: 1
-   :class-container: only-light
 
    .. grid-item-card::
       :link: https://github.com/scDiffEq/LARRY-dataset
@@ -152,6 +169,20 @@
       :octicon:`desktop-download;3em;sd-text-light`
 
    .. grid-item-card::
+      :link: datasets.rst
+      :text-align: right
+      :img-background: _static/scdiffeq-sd-card-dark.png
+      :class-card: only-dark
+       
+      Datasets
+      ^^^
+       
+      .. raw:: html
+
+         <embed><div><br><br></div></embed>
+
+      :octicon:`desktop-download;3em;sd-text-dark`
+   .. grid-item-card::
       :link: api.rst
       :text-align: right
       :img-background: _static/scdiffeq-sd-card-dark.png
@@ -166,6 +197,10 @@
 
       :octicon:`code;3em;sd-text-light`
 
+.. grid:: 4
+   :gutter: 1
+   :class-container: only-dark
+   
    .. grid-item-card::
       :link: notebooks.rst
       :text-align: right
@@ -181,9 +216,6 @@
 
       :octicon:`sidebar-expand;3em;sd-text-light`
 
-.. grid:: 4
-   :gutter: 1
-   :class-container: only-dark
 
    .. grid-item-card::
       :link: https://github.com/scDiffEq/LARRY-dataset

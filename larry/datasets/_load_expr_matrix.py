@@ -22,7 +22,7 @@ class RetypedExpressionMatrix(ABCParse.ABCParse):
 
     @property
     def npz_path(self):
-        return pathlib.Path(str(expr_mat.mtx_path).replace("mtx.gz", "npz"))
+        return pathlib.Path(str(self.mtx_path).replace("mtx.gz", "npz"))
 
     @property
     def mtx(self):
