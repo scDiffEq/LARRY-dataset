@@ -1,15 +1,19 @@
 
-# -- import local dependencies: -----
+# -- import local dependencies: -----------------------------------------------
 from ._interpolation_data import InterpolationData
 
 
-# -- import packages: ----
+# -- import packages: ---------------------------------------------------------
 import ABCParse
 import autodevice
 import torch
 
+
+# -- set typing: --------------------------------------------------------------
 from typing import Tuple
 
+
+# -- Operational class: -------------------------------------------------------
 class InterpolationTask(ABCParse.ABCParse):
     def __init__(
         self,

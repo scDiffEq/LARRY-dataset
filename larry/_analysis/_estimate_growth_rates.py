@@ -7,7 +7,7 @@ __email__ = ", ".join(["vinyard@g.harvard.edu",])
 # import packages: ------------------------------------------------------------
 import anndata
 import numpy as np
-import vinplots
+# import vinplots
 import matplotlib.pyplot as plt
 
 
