@@ -37,7 +37,7 @@ class InterpolationData(ABCParse.ABCParse):
     @property
     def X0(self):
         return adata_query.fetch(
-            self._adata[self.t0_idx], key=self._use_key, device=self._device
+            self._adata[self.t0_idx], key=self._use_key, torch=True, device=self._device
         )
 
     def _sample_at_t(self, t):
@@ -62,6 +62,7 @@ class InterpolationData(ABCParse.ABCParse):
             self._d4_test = adata_query.fetch(
                 self._adata[self.df_clonal_d4.index],
                 key="X_pca", # always pca for d4, d6
+                torch=True,
                 device=self._device,
             )
         return self._d4_test
@@ -73,6 +74,7 @@ class InterpolationData(ABCParse.ABCParse):
             self._d6_train = adata_query.fetch(
                 self._adata[self.df_clonal_d6.index],
                 key="X_pca", # always pca for d4, d6
+                torch=True,
                 device=self._device,
             )
         return self._d6_train

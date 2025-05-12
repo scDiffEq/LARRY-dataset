@@ -35,8 +35,9 @@ class InterpolationTask(ABCParse.ABCParse):
         self.data = InterpolationData(**self._DATA_KWARGS)
         
         from scdiffeq.core.lightning_models.base import SinkhornDivergence
+        self._sinkhorn_fn = SinkhornDivergence
         
-        self.SinkhornDivergence = SinkhornDivergence(**self._SINKHORN_KWARGS)
+        self.SinkhornDivergence = self._sinkhorn_fn(**self._SINKHORN_KWARGS)
 
     @property
     def _DATA_KWARGS(self):
@@ -46,7 +47,7 @@ class InterpolationTask(ABCParse.ABCParse):
     @property
     def _SINKHORN_KWARGS(self):
         return ABCParse.function_kwargs(
-            func=SinkhornDivergence, kwargs=self._PARAMS
+            func=self._sinkhorn_fn, kwargs=self._PARAMS
         )
 
     def forward_without_grad(self, DiffEq):
@@ -63,7 +64,7 @@ class InterpolationTask(ABCParse.ABCParse):
     
     @property
     def potential(self):
-        return "Potential" in str(self.DiffEq)
+        return "Potential" in str(self._DiffEq)
     
     def _parse_forward_out(self, X_hat):
         """to account for KLDiv"""
@@ -73,7 +74,7 @@ class InterpolationTask(ABCParse.ABCParse):
     
     def _dimension_reduce_pca(self, X_hat):
         return torch.stack(
-            [torch.Tensor(self.PCA.transform(x)) for x in X_hat.detach().cpu().numpy()]
+            [torch.Tensor(self._PCA.transform(x)) for x in X_hat.detach().cpu().numpy()]
         ).to(self.device)     
 
 
@@ -86,13 +87,13 @@ class InterpolationTask(ABCParse.ABCParse):
         else:
             X_hat = self.forward_without_grad(DiffEq)
             
-        if not self.PCA is None:
+        if not self._PCA is None:
             X_hat = self._dimension_reduce_pca(X_hat)
         
         d4_loss = self.SinkhornDivergence(X_hat[1], self.data.X_test_d4).item()
         d6_loss = self.SinkhornDivergence(X_hat[2], self.data.X_train_d6).item()
 
-        if not self.silent:
+        if not self._silent:
             print(
                 "- Epoch: {:<5}| Day 4 loss: {:.2f} | Day 6 loss: {:.2f}".format(
                     DiffEq.current_epoch, d4_loss, d6_loss,
