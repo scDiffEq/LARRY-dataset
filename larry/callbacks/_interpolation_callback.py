@@ -38,6 +38,9 @@ class InterpolationCallback(lightning.Callback, ABCParse.ABCParse):
             **self._TASK_KWARGS
         )
 
+    def __repr__(self) -> str:
+        return "InterpolationCallback()"
+
     @property
     def _TASK_KWARGS(self):
         return ABCParse.function_kwargs(

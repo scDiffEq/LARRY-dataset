@@ -19,6 +19,9 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
     ):
         self.__parse__(locals(), public=[None])
 
+    def __repr__(self) -> str:
+        return "FatePredictionCallback()"
+
     @property
     def F_obs(self):
         F_obs = tasks.fate_prediction.F_obs
