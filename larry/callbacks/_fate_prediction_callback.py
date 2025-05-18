@@ -5,9 +5,11 @@ import autodevice
 import lightning
 import pathlib
 import pandas as pd
+import torch
 
 # -- import local dependencies: ------------------------------------------------
 from .. import tasks
+
 
 metrics = tasks.fate_prediction.metrics
 
@@ -15,7 +17,7 @@ metrics = tasks.fate_prediction.metrics
 # -- Callback: -----------------------------------------------------------------
 class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
     def __init__(
-        self, adata, N: int = 2000, device=autodevice.AutoDevice(), *args, **kwargs
+        self, adata, N: int = 2000, device: torch.device =autodevice.AutoDevice(), *args, **kwargs
     ):
         self.__parse__(locals(), public=[None])
 
@@ -33,7 +35,7 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         return self.F_obs.index
 
     @property
-    def _BASE_PATH(self):
+    def _BASE_PATH(self) -> pathlib.Path:
         # assumes the first logger is the .CSVLogger
         base_path = pathlib.Path(self._log_dir).joinpath("fate_prediction_metrics")
         if not base_path.exists():
@@ -41,33 +43,33 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         return base_path
 
     @property
-    def _CKPT_METRICS_PATH(self):
+    def _CKPT_METRICS_PATH(self) -> pathlib.Path:
         ckpt_metrics_path = self._BASE_PATH.joinpath(self._ckpt_name)
         if not ckpt_metrics_path.exists():
             ckpt_metrics_path.mkdir()
         return ckpt_metrics_path
 
     @property
-    def _F_hat_unfiltered_csv_path(self):
+    def _F_hat_unfiltered_csv_path(self) -> pathlib.Path:
         return self._CKPT_METRICS_PATH.joinpath("F_hat.unfiltered.csv")
 
     @property
-    def _F_hat_processed_csv_path(self):
+    def _F_hat_processed_csv_path(self) -> pathlib.Path:
         return self._CKPT_METRICS_PATH.joinpath("F_hat.processed.csv")
 
     @property
-    def _ACC_CSV_PATH(self):
+    def _ACC_CSV_PATH(self) -> pathlib.Path:
         return self._CKPT_METRICS_PATH.joinpath("accuracy.csv")
 
     @property
-    def _NEG_CE_CSV_PATH(self):
+    def _NEG_CE_CSV_PATH(self) -> pathlib.Path:
         return self._CKPT_METRICS_PATH.joinpath("neg_cross_entropy.csv")
 
     @property
-    def _NM_CORR_CSV_PATH(self):
+    def _NM_CORR_CSV_PATH(self) -> pathlib.Path:
         return self._CKPT_METRICS_PATH.joinpath("neu_mon_corr.csv")
 
-    def compute_fate_bias(self, pl_module):
+    def compute_fate_bias(self, pl_module) -> pd.DataFrame:
 
         fate_bias = tasks.fate_prediction.FateBias()
         F_hat = fate_bias(
@@ -79,7 +81,7 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         F_hat.index = F_hat.index.astype(str)
         return F_hat
 
-    def process_F_hat(self, F_hat: pd.DataFrame, index=None):
+    def process_F_hat(self, F_hat: pd.DataFrame, index=None) -> pd.DataFrame:
 
         print(f"Saving `F_hat` [ unfilt. ] to: {self._F_hat_unfiltered_csv_path}")
         F_hat.to_csv(self._F_hat_unfiltered_csv_path)
@@ -96,13 +98,13 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
             F_hat.index = F_hat.index.astype(str)
         return F_hat
 
-    def _accuracy(self, F_hat):
+    def _accuracy(self, F_hat) -> None:
 
         accuracy_df = metrics.multi_idx_accuracy(self.F_obs, F_hat)
         print(f"Saving `accuracy_df` to: {self._ACC_CSV_PATH}")
         accuracy_df.to_csv(self._ACC_CSV_PATH)
 
-    def _negative_cross_entropy(self, F_hat):
+    def _negative_cross_entropy(self, F_hat) -> None:
 
         neg_cross_entropy_df = metrics.multi_idx_negative_cross_entropy(
             self.F_obs, F_hat
@@ -110,7 +112,7 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         print(f"Saving `neg_cross_entropy_df` to: {self._NEG_CE_CSV_PATH}")
         neg_cross_entropy_df.to_csv(self._NEG_CE_CSV_PATH)
 
-    def _neu_mon_corr(self, F_hat):
+    def _neu_mon_corr(self, F_hat) -> None:
 
         neu_mon_corr_df = pd.DataFrame(
             metrics.neutrophil_monocyte_correlation(self.F_obs, F_hat)
@@ -118,13 +120,13 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         print(f"Saving `neu_mon_corr_df` to: {self._NM_CORR_CSV_PATH}")
         neu_mon_corr_df.to_csv(self._NM_CORR_CSV_PATH)
 
-    def compute_metrics(self, F_hat):
+    def compute_metrics(self, F_hat) -> None:
 
         self._accuracy(F_hat)
         self._negative_cross_entropy(F_hat)
         self._neu_mon_corr(F_hat)
 
-    def forward(self, pl_module, ckpt_name, log_dir):
+    def forward(self, pl_module, ckpt_name, log_dir) -> None:
 
         """ """
 
@@ -134,35 +136,10 @@ class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
         self.F_hat = self.process_F_hat(self.F_hat_unfiltered)
         self.compute_metrics(self.F_hat)
 
-    def on_train_end(self, trainer, pl_module):
+    def on_train_end(self, trainer, pl_module) -> None:
 
         ckpt_name = f"on_train_end.epoch_{pl_module.current_epoch}"
 
         log_dir = self._log_dir = pl_module.loggers[0].log_dir
 
         self.forward(pl_module, ckpt_name=ckpt_name, log_dir=log_dir)
-
-        
-# -- import packages: ----------------------------------------------------------
-# import autodevice
-# import lightning
-# import ABCParse
-
-# -- import local dependencies: ------------------------------------------------
-# from .. import utils
-# from .. import tasks
-
-
-# # -- Callback class: -----------------------------------------------------------
-# class FatePredictionCallback(lightning.Callback, ABCParse.ABCParse):
-#     def __init__(self, model):
-        
-#         self.__parse__(locals())
-        
-#         self._parse_model(model)
-
-#     def _parse_model(self, model):
-    
-#         adata = model.adata
-#         kNN_Graph = model.kNN_Graph
-#         PCA = model.reducer.PCA

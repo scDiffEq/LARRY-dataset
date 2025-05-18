@@ -1,4 +1,3 @@
-
 from ... import utils
 from . import _fate_prediction_utils as fate_utils
 
@@ -8,6 +7,7 @@ import torch
 import time
 import ABCParse
 import adata_query
+import sys
 
 # from ._fate_prediction_data import FatePredictionData
 from ._observed_fate_bias import F_obs
@@ -15,7 +15,7 @@ from ._observed_fate_bias import F_obs
 from typing import List, Optional, Union
 
 
-### from when the `FatePredictionData` class was in it's own module script: 
+### from when the `FatePredictionData` class was in it's own module script:
 ### MOVE THIS TO _fate_bias_matrix_generation.py ?? and make one class. would make sense.
 ### then you have the task class which encompasses the modules for accuracy quantitation.
 def is_notebook() -> bool:
@@ -33,7 +33,7 @@ def is_notebook() -> bool:
             return False  # Other type (?)
     except NameError:
         return False      # Probably standard Python interpreter
-    
+
 
 class FatePredictionData(ABCParse.ABCParse):
     def __init__(
@@ -95,23 +95,23 @@ class FatePredictionData(ABCParse.ABCParse):
         return self._X0
 
 
-# -- main class: ----------------------------------------------------------------------      
+# -- main class: ----------------------------------------------------------------------
 class FateBias(ABCParse.ABCParse):
     def __init__(self, device=autodevice.AutoDevice()):
-        
+
         self.__parse__(locals())
-        
+
     @property
     def kNN(self):
         if not hasattr(self, "_kNN"):
             import scdiffeq as sdq
             self._kNN = sdq.tl.kNN(self._adata)
         return self._kNN
-    
+
     @property
     def _MODEL_TYPE(self):
         return str(self._DiffEq)
-    
+
     def _fate_bias_matrix(self):
         value_counts = {
             key: val[self._obs_key].value_counts() for key, val in self.F_hat.items()
@@ -122,15 +122,24 @@ class FateBias(ABCParse.ABCParse):
     def _predict_state(self, X0, t0_idx):
         """returns only the FINAL state"""
         return self._DiffEq(X0, t=self.data.t)[-1].detach().cpu().numpy()
-    
+
     def umap_transform(self, umap_model, t0_idx=[], random=0):
 
+        if "google.colab" in sys.modules:
+            PROGRESS_BAR = range(len(t0_idx))
+        else:
+            import tqdm.notebook
+            PROGRESS_BAR = tqdm.notebook.tqdm(range(len(t0_idx)), desc="umap projection")
+
         if random > 0:
+            import numpy as np
             t0_idx = np.random.choice(self.t0_idx, random)
 
         self.X_umap = {}
 
-        for i in tqdm.notebook.tqdm(range(len(t0_idx)), desc="umap projection"):
+        import scdiffeq as sdq
+
+        for i in PROGRESS_BAR:
             self.X_umap[t0_idx[i]] = np.stack(
                 [
                     umap_model.transform(x)
@@ -140,18 +149,18 @@ class FateBias(ABCParse.ABCParse):
     @property
     def _kNN_BASIS(self):
         return self.kNN.X_use.shape[1]
-            
+
     def _configure_dimension_reduction(self)->bool:
         self._dimension_reduce = self.data.X0.shape[-1] > self._kNN_BASIS
-    
+
     @property
     def _DIMENSION_REDUCE(self)->bool:
         if not hasattr(self, "_dimension_reduce"):
             self._configure_dimension_reduction()
         return self._dimension_reduce
-    
+
     def _configure_t0_idx(self):
-        
+
         if hasattr(self, "_t0_idx"):
             self._t0_idx_config = self._t0_idx
         else:
@@ -162,13 +171,13 @@ class FateBias(ABCParse.ABCParse):
                 self._t0_idx_config = self.F_obs().index
             finally:
                 self._t0_idx_config = self.data.t0_idx
-        
+
     @property
     def t0_idx(self):
         if not hasattr(self, "_t0_idx_config"):
             self._configure_t0_idx()
         return self._t0_idx_config
-        
+
     def __call__(
         self,
         adata,
@@ -190,9 +199,9 @@ class FateBias(ABCParse.ABCParse):
         """
 
         self.__update__(locals())
-        
+
         self.F_hat = {}
-        
+
         self.data = FatePredictionData(
             self._adata,
             t0_idx = self._t0_idx,
@@ -201,29 +210,31 @@ class FateBias(ABCParse.ABCParse):
             N = self._N,
             device = self._device,
         )
-        
-        if notebook:
+
+        if "google.colab" in sys.modules:
+            PROGRESS_BAR = range(len(self.t0_idx))
+
+        elif notebook:
             import tqdm.notebook
-            TQDM = tqdm.notebook.tqdm
+            PROGRESS_BAR = tqdm.notebook.tqdm(range(len(self.t0_idx)), desc="EVALUATION")
         else:
             import tqdm
-            TQDM = tqdm.tqdm
-            
-        
-        for i in TQDM(range(len(self.t0_idx)), desc="EVALUATION"):
+            PROGRESS_BAR = tqdm.tqdm(
+                range(len(self.t0_idx)), desc="EVALUATION"
+            )
+
+        for i in PROGRESS_BAR:
 
             X_hat = self._predict_state(X0=self.data.X0[i].to(self._device), t0_idx=self.t0_idx[i])
-            
+
             if self._DIMENSION_REDUCE:
                 X_hat = self.PCA.transform(X_hat)
-                
+
             self.F_hat[self.t0_idx[i]] = self.kNN.aggregate(
                 X_hat, obs_key=self._obs_key, max_only=True
             )
-            
+
         return self._fate_bias_matrix()
-        
 
     def __repr__(self):
         return f"Fate prediction evaluation | evaluating: {self._MODEL_TYPE}"
-
