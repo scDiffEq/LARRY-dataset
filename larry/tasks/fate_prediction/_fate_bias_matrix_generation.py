@@ -224,6 +224,8 @@ class FateBias(ABCParse.ABCParse):
             )
 
         for i in PROGRESS_BAR:
+            if "google.colab" in sys.modules:
+                print(f"EVALUATION: {i} of {len(self.t0_idx)}", end="\r")
 
             X_hat = self._predict_state(X0=self.data.X0[i].to(self._device), t0_idx=self.t0_idx[i])
 
