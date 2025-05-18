@@ -14,7 +14,7 @@ with open(f"larry/__version__.py") as v:
 # -- run setup: ---------------------------------------------------------------
 setuptools.setup(
     name='LARRY-dataset',
-    version='0.0.2rc1',
+    version=__version__,
     python_requires='>3.10',
     author='Michael E. Vinyard',
     author_email='mvinyard.ai@gmail.com',
