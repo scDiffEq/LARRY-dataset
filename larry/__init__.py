@@ -5,7 +5,8 @@ from . import callbacks
 from . import datasets
 from . import utils
 from . import tasks
-from . import __version__
+
+from .__version__ import __version__
 
 
 __all__ = ["an", "pl", "tl", "callbacks", "datasets", "utils", "tasks", "__version__"]
